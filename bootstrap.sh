@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+#
+# Bootstrap script for setting up.
 
 set -e
 
 DOTFILES_ROOT=$(pwd -P)
 
-echo ""
+echo ''
 
 info () {
   printf "\r  [ \033[00;34m..\033[0m ] $1\n"
@@ -20,29 +22,27 @@ success () {
 
 fail () {
   printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  echo ""
+  echo ''
   exit
 }
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]
-  then
-    info "setup gitconfig"
+  if ! [ -f git/gitconfig.local.symlink ]; then
+    info 'setup gitconfig'
 
-    git_credential="cache"
-    if [ "$(uname -s)" == "Darwin" ]
-    then
-      git_credential="osxkeychain"
+    git_credential='cache'
+    if [ "$(uname -s)" == 'Darwin' ]; then
+      git_credential='osxkeychain'
     fi
 
-    user " - What is your github author name?"
+    user ' - What is your github author name?'
     read -e git_authorname
-    user " - What is your github author email?"
+    user ' - What is your github author email?'
     read -e git_authoremail
 
     sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
 
-    success "gitconfig"
+    success 'gitconfig'
   fi
 }
 
@@ -53,21 +53,13 @@ link_file () {
   local overwrite= backup= skip=
   local action=
 
-  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]
-  then
-
-    if [ "$overwrite_all" == "false" ] && [ "$backup_all" == "false" ] && [ "$skip_all" == "false" ]
-    then
-
+  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]; then
+    if [ "$overwrite_all" == 'false' ] && [ "$backup_all" == 'false' ] && [ "$skip_all" == 'false' ]; then
       local current_src="$(readlink $dst)"
 
-      if [ "$current_src" == "$src" ]
-      then
-
+      if [ "$current_src" == "$src" ]; then
         skip=true;
-
       else
-
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
         read -n 1 action
@@ -88,47 +80,40 @@ link_file () {
           * )
             ;;
         esac
-
       fi
-
     fi
 
     overwrite=${overwrite:-$overwrite_all}
     backup=${backup:-$backup_all}
     skip=${skip:-$skip_all}
 
-    if [ "$overwrite" == "true" ]
-    then
+    if [ "$overwrite" == 'true' ]; then
       rm -rf "$dst"
       success "removed $dst"
     fi
 
-    if [ "$backup" == "true" ]
-    then
+    if [ "$backup" == 'true' ]; then
       mv "$dst" "${dst}.backup"
       success "moved $dst to ${dst}.backup"
     fi
 
-    if [ "$skip" == "true" ]
-    then
+    if [ "$skip" == 'true' ]; then
       success "skipped $src"
     fi
   fi
 
-  if [ "$skip" != "true" ]  # "false" or empty
-  then
+  if [ "$skip" != 'true' ]; then
     ln -s "$1" "$2"
     success "linked $1 to $2"
   fi
 }
 
 install_dotfiles () {
-  info "installing dotfiles"
+  info 'installing dotfiles'
 
   local overwrite_all=false backup_all=false skip_all=false
 
-  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name "*.symlink" -not -path "*.git*")
-  do
+  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
     dst="$HOME/.$(basename "${src%.*}")"
     link_file "$src" "$dst"
   done
@@ -137,16 +122,14 @@ install_dotfiles () {
 setup_gitconfig
 install_dotfiles
 
-if [ "$(uname -s)" == "Darwin" ]
-then
-  info "installing dependencies"
-  if source bin/dot.sh | while read -r data; do info "$data"; done
-  then
-    success "dependencies installed"
+if [ "$(uname -s)" == 'Darwin' ]; then
+  info 'installing dependencies'
+  if source bin/dot.sh | while read -r data; do info "$data"; done; then
+    success 'dependencies installed'
   else
-    fail "error installing dependencies"
+    fail 'error installing dependencies'
   fi
 fi
 
-echo ""
-echo "  All installed!"
+echo ''
+echo '  All installed!'
