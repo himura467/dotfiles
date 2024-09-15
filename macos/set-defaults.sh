@@ -32,6 +32,9 @@ defaults write com.apple.finder ShowPathbar -bool true
 ## Disable automatic capitalization.
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
+## Disable automatic period substitution.
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+
 ## Disable automatic spelling correction.
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
