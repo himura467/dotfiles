@@ -1,7 +1,7 @@
 alias ga="git add -A"
 alias gb="git branch"
 alias gc="git commit"
-alias gcle="git clean -dfx"
+alias gcle="git clean -df"
 alias gclo="git clone"
 alias gco="git checkout"
 # Remove "+" and "-" from start of diff lines; just rely upon color.
