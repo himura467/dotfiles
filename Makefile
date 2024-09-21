@@ -1,5 +1,5 @@
 .PHONY: test
-test: test-dotfiles-exist test-macos test-brew
+test: test-dotfiles-exist test-macos test-git test-brew
 
 test-dotfiles-exist:
 	@echo "Check if dotfiles exist..."
@@ -51,6 +51,11 @@ test-macos:
 	@defaults read -g com.apple.scrollwheel.scaling > /dev/null 2>&1 && \
 	(test "$(shell defaults read -g com.apple.scrollwheel.scaling)" = 5 && echo "OK. Scrollwheel scaling is correct." || (echo "FAIL. Scrollwheel scaling is not correct." && exit 1)) || \
 	echo "INFO: Scrollwheel scaling is not set. Skipping test."
+
+test-git:
+	@echo "Check if git is set up correctly..."
+	@test "$(shell git config --get user.name)" = "$(GIT_AUTHORNAME)" && echo "OK. Git user.name is correct." || (echo "FAIL. Git user.name is not correct." && exit 1)
+	@test "$(shell git config --get user.email)" = "$(GIT_AUTHOREMAIL)" && echo "OK. Git user.email is correct." || (echo "FAIL. Git user.email is not correct." && exit 1)
 
 test-brew:
 	@echo "Check if Homebrew is installed..."

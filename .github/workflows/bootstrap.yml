@@ -26,4 +26,7 @@ jobs:
           GIT_AUTHOREMAIL: ${{ secrets.GIT_AUTHOREMAIL }}
         run: ./bootstrap.sh
       - name: Run tests
+        env:
+          GIT_AUTHORNAME: ${{ secrets.GIT_AUTHORNAME }}
+          GIT_AUTHOREMAIL: ${{ secrets.GIT_AUTHOREMAIL }}
         run: make test
