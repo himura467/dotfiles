@@ -14,6 +14,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Delete existing dotfiles
+        run: |
+          rm -f ~/.zshrc
+          rm -f ~/.gitconfig
+          rm -f ~/.gitconfig.local
+          rm -f ~/.gitignore
       - name: Bootstrap
         env:
           GIT_AUTHORNAME: ${{ secrets.GIT_AUTHORNAME }}
