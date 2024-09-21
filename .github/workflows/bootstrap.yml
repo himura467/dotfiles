@@ -1,0 +1,23 @@
+name: Test bootstrap
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Bootstrap
+        env:
+          GIT_AUTHORNAME: ${{ secrets.GIT_AUTHORNAME }}
+          GIT_AUTHOREMAIL: ${{ secrets.GIT_AUTHOREMAIL }}
+        run: ./bootstrap.sh
+      - name: Run tests
+        run: make test
