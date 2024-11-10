@@ -31,7 +31,7 @@ chflags nohidden ~/Library
 defaults write com.apple.finder ShowPathbar -bool true
 
 ## Set the default location for new Finder windows to the home folder.
-defaults read com.apple.finder NewWindowTarget PfHm
+defaults write com.apple.finder NewWindowTarget PfHm
 
 # Keyboard
 ## Disable automatic capitalization.
