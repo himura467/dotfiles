@@ -2,6 +2,8 @@
 #
 # Set macOS defaults.
 
+set -e
+
 # Dock
 ## Set the icon size of Dock items to 32 pixels.
 defaults write com.apple.dock tilesize -int 32

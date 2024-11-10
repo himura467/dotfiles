@@ -4,7 +4,7 @@
 
 set -e
 
-if test ! $(which plenv); then
+if ! command -v plenv > /dev/null; then
   echo '  Installing plenv...'
 
   git clone https://github.com/tokuhirom/plenv.git ~/.plenv

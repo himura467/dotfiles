@@ -27,22 +27,22 @@ fail () {
 }
 
 setup_gitconfig () {
-  if ! [ -f git/gitconfig.local.symlink ]; then
+  if ! [[ -f git/gitconfig.local.symlink ]]; then
     info 'setup gitconfig'
 
     git_credential='cache'
-    if [ "$(uname -s)" == 'Darwin' ]; then
+    if [[ "$(uname -s)" == 'Darwin' ]]; then
       git_credential='osxkeychain'
     fi
 
-    if [ -n "$GIT_AUTHORNAME" ]; then
+    if [[ -n "$GIT_AUTHORNAME" ]]; then
       git_authorname="$GIT_AUTHORNAME"
     else
       user ' - What is your github author name?'
       read -e git_authorname
     fi
 
-    if [ -n "$GIT_AUTHOREMAIL" ]; then
+    if [[ -n "$GIT_AUTHOREMAIL" ]]; then
       git_authoremail="$GIT_AUTHOREMAIL"
     else
       user ' - What is your github author email?'
@@ -62,11 +62,11 @@ link_file () {
   local overwrite= backup= skip=
   local action=
 
-  if [ -f "$dst" -o -d "$dst" -o -L "$dst" ]; then
-    if [ "$overwrite_all" == 'false' ] && [ "$backup_all" == 'false' ] && [ "$skip_all" == 'false' ]; then
+  if [[ -f "$dst" || -d "$dst" || -L "$dst" ]]; then
+    if [[ "$overwrite_all" == 'false' && "$backup_all" == 'false' && "$skip_all" == 'false' ]]; then
       local current_src="$(readlink $dst)"
 
-      if [ "$current_src" == "$src" ]; then
+      if [[ "$current_src" == "$src" ]]; then
         skip=true;
       else
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
@@ -96,22 +96,22 @@ link_file () {
     backup=${backup:-$backup_all}
     skip=${skip:-$skip_all}
 
-    if [ "$overwrite" == 'true' ]; then
+    if [[ "$overwrite" == 'true' ]]; then
       rm -rf "$dst"
       success "removed $dst"
     fi
 
-    if [ "$backup" == 'true' ]; then
+    if [[ "$backup" == 'true' ]]; then
       mv "$dst" "${dst}.backup"
       success "moved $dst to ${dst}.backup"
     fi
 
-    if [ "$skip" == 'true' ]; then
+    if [[ "$skip" == 'true' ]]; then
       success "skipped $src"
     fi
   fi
 
-  if [ "$skip" != 'true' ]; then
+  if [[ "$skip" != 'true' ]]; then
     ln -s "$1" "$2"
     success "linked $1 to $2"
   fi
@@ -128,17 +128,30 @@ install_dotfiles () {
   done
 }
 
+set_macos_defaults () {
+  info 'setting macOS defaults'
+
+  if [[ "$(uname -s)" == 'Darwin' ]]; then
+    $DOTFILES_ROOT/macos/set-defaults.sh
+  fi
+}
+
+set_homebrew () {
+  if ! command -v brew > /dev/null; then
+    info 'installing homebrew'
+
+    $DOTFILES_ROOT/homebrew/install.sh
+  else
+    info 'updating homebrew'
+
+    $DOTFILES_ROOT/homebrew/upgrade.sh
+  fi
+}
+
 setup_gitconfig
 install_dotfiles
-
-if [ "$(uname -s)" == 'Darwin' ]; then
-  info 'installing dependencies'
-  if source bin/dot.sh | while read -r data; do info "$data"; done; then
-    success 'dependencies installed'
-  else
-    fail 'error installing dependencies'
-  fi
-fi
+set_macos_defaults
+set_homebrew
 
 echo ''
 echo '  All installed!'
