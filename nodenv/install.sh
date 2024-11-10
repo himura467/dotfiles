@@ -4,7 +4,7 @@
 
 set -e
 
-if test ! $(which nodenv); then
+if ! command -v nodenv > /dev/null; then
   echo '  Installing nodenv...'
 
   brew install nodenv

@@ -4,8 +4,6 @@
 
 set -e
 
-if test ! $(which pyenv); then
-  echo '  Installing pyenv...'
-
+if command -v brew > /dev/null; then
   brew install pyenv
 fi
