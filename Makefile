@@ -59,4 +59,4 @@ test-git:
 
 test-brew:
 	@echo 'Check if Homebrew is installed...'
-	@shell command -v brew > /dev/null && echo 'OK. Homebrew is installed.' || (echo 'FAIL. Homebrew is not installed.' && exit 1)
+	@command -v brew > /dev/null && echo 'OK. Homebrew is installed.' || (echo 'FAIL. Homebrew is not installed.' && exit 1)
