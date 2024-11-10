@@ -62,8 +62,8 @@ link_file () {
   local overwrite= backup= skip=
   local action=
 
-  if [[ -f "$dst" -o -d "$dst" -o -L "$dst" ]]; then
-    if [[ "$overwrite_all" == 'false' ]] && [[ "$backup_all" == 'false' ]] && [[ "$skip_all" == 'false' ]]; then
+  if [[ -f "$dst" || -d "$dst" || -L "$dst" ]]; then
+    if [[ "$overwrite_all" == 'false' && "$backup_all" == 'false' && "$skip_all" == 'false' ]]; then
       local current_src="$(readlink $dst)"
 
       if [[ "$current_src" == "$src" ]]; then
