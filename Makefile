@@ -34,6 +34,9 @@ test-macos:
 	@defaults read com.apple.finder ShowPathbar > /dev/null 2>&1 && \
 	([[ "$(shell defaults read com.apple.finder ShowPathbar)" = 1 ]] && echo 'OK. ShowPathbar is correct.' || (echo 'FAIL. ShowPathbar is not correct.' && exit 1)) || \
 	echo 'INFO: ShowPathbar is not set. Skipping test.'
+	@defaults read com.apple.finder NewWindowTarget > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.finder NewWindowTarget)" = PfHm ]] && echo 'OK. NewWindowTarget is correct.' || (echo 'FAIL. NewWindowTarget is not correct.' && exit 1)) || \
+	echo 'INFO: NewWindowTarget is not set. Skipping test.'
 	# Keyboard
 	@defaults read NSGlobalDomain NSAutomaticCapitalizationEnabled > /dev/null 2>&1 && \
 	([[ "$(shell defaults read NSGlobalDomain NSAutomaticCapitalizationEnabled)" = 0 ]] && echo 'OK. NSAutomaticCapitalizationEnabled is correct.' || (echo 'FAIL. NSAutomaticCapitalizationEnabled is not correct.' && exit 1)) || \
