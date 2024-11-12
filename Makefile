@@ -1,5 +1,5 @@
 .PHONY: test
-test: test-dotfiles-exist test-macos test-git test-brew
+test: test-dotfiles-exist test-macos test-git test-brew test-neovim
 
 test-dotfiles-exist:
 	@echo 'Check if dotfiles exist...'
@@ -63,3 +63,7 @@ test-git:
 test-brew:
 	@echo 'Check if Homebrew is installed...'
 	@command -v brew > /dev/null && echo 'OK. Homebrew is installed.' || (echo 'FAIL. Homebrew is not installed.' && exit 1)
+
+test-neovim:
+	@echo 'Check if Neovim is installed...'
+	@command -v nvim > /dev/null && echo 'OK. Neovim is installed.' || (echo 'FAIL. Neovim is not installed.' && exit 1)
