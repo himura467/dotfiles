@@ -148,10 +148,19 @@ set_homebrew () {
   fi
 }
 
+set_neovim () {
+  if ! command -v nvim > /dev/null; then
+    info 'installing neovim'
+
+    $DOTFILES_ROOT/neovim/install.sh
+  fi
+}
+
 setup_gitconfig
 install_dotfiles
 set_macos_defaults
 set_homebrew
+set_neovim
 
 echo ''
 echo '  All installed!'
