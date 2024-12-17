@@ -141,6 +141,8 @@ set_homebrew () {
     info 'installing homebrew'
 
     $DOTFILES_ROOT/homebrew/install.sh
+
+    source $DOTFILES_ROOT/homebrew/path.zsh
   else
     info 'updating homebrew'
 
