@@ -1,9 +1,7 @@
-## Install
+## Installation
 
 Run this:
 
 ```sh
-git clone this/repository ~/.dotfiles
-cd ~/.dotfiles
-./bootstrap.sh
+git clone https://github.com/himura467/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./bootstrap.sh
 ```
