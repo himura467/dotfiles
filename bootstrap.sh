@@ -4,31 +4,13 @@
 
 set -e
 
-DOTFILES_ROOT=$(pwd -P)
+DOTFILES_ROOT=$(pwd)
 
-echo ''
-
-info () {
-  printf "\r  [ \033[00;34m..\033[0m ] $1\n"
-}
-
-user () {
-  printf "\r  [ \033[0;33m??\033[0m ] $1\n"
-}
-
-success () {
-  printf "\r\033[2K  [ \033[00;32mOK\033[0m ] $1\n"
-}
-
-fail () {
-  printf "\r\033[2K  [\033[0;31mFAIL\033[0m] $1\n"
-  echo ''
-  exit
-}
+source "$DOTFILES_ROOT/lib/logger.sh"
 
 setup_gitconfig () {
   if ! [[ -f git/gitconfig.local.symlink ]]; then
-    info 'setup gitconfig'
+    info 'Setting up gitconfig'
 
     git_credential='cache'
     if [[ "$(uname -s)" == 'Darwin' ]]; then
@@ -39,19 +21,19 @@ setup_gitconfig () {
       git_authorname="$GIT_AUTHORNAME"
     else
       user ' - What is your github author name?'
-      read -e git_authorname
+      read -p '>' -e git_authorname
     fi
 
     if [[ -n "$GIT_AUTHOREMAIL" ]]; then
       git_authoremail="$GIT_AUTHOREMAIL"
     else
       user ' - What is your github author email?'
-      read -e git_authoremail
+      read -p '>' -e git_authoremail
     fi
 
     sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
 
-    success 'gitconfig'
+    success 'gitconfig set up'
   fi
 }
 
@@ -71,7 +53,7 @@ link_file () {
       else
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
-        read -n 1 action
+        read -p '>' -n 1 action
 
         case "$action" in
           o )
@@ -98,27 +80,27 @@ link_file () {
 
     if [[ "$overwrite" == 'true' ]]; then
       rm -rf "$dst"
-      success "removed $dst"
+      success "Removed $dst"
     fi
 
     if [[ "$backup" == 'true' ]]; then
       mv "$dst" "${dst}.backup"
-      success "moved $dst to ${dst}.backup"
+      success "Moved $dst to ${dst}.backup"
     fi
 
     if [[ "$skip" == 'true' ]]; then
-      success "skipped $src"
+      success "Skipped $src"
     fi
   fi
 
   if [[ "$skip" != 'true' ]]; then
     ln -s "$1" "$2"
-    success "linked $1 to $2"
+    success "Linked $1 to $2"
   fi
 }
 
 install_dotfiles () {
-  info 'installing dotfiles'
+  info 'Installing dotfiles'
 
   local overwrite_all=false backup_all=false skip_all=false
 
@@ -129,7 +111,7 @@ install_dotfiles () {
 }
 
 set_macos_defaults () {
-  info 'setting macOS defaults'
+  info 'Setting macOS defaults'
 
   if [[ "$(uname -s)" == 'Darwin' ]]; then
     $DOTFILES_ROOT/macos/set-defaults.sh
@@ -138,13 +120,13 @@ set_macos_defaults () {
 
 set_homebrew () {
   if ! command -v brew > /dev/null; then
-    info 'installing homebrew'
+    info 'Installing homebrew'
 
     $DOTFILES_ROOT/homebrew/install.sh
 
     source $DOTFILES_ROOT/homebrew/path.zsh
   else
-    info 'updating homebrew'
+    info 'Updating homebrew'
 
     $DOTFILES_ROOT/homebrew/upgrade.sh
   fi
@@ -152,7 +134,7 @@ set_homebrew () {
 
 set_neovim () {
   if ! command -v nvim > /dev/null; then
-    info 'installing neovim'
+    info 'Installing neovim'
 
     $DOTFILES_ROOT/neovim/install.sh
   fi
@@ -164,5 +146,4 @@ set_macos_defaults
 set_homebrew
 set_neovim
 
-echo ''
-echo '  All installed!'
+echo '  All installed'

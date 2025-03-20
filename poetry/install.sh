@@ -4,10 +4,20 @@
 
 set -e
 
+DOTFILES_ROOT=$(pwd)
+
+source "$DOTFILES_ROOT/lib/logger.sh"
+
+info 'Installing Poetry'
+
 if ! command -v poetry > /dev/null; then
   if command -v python > /dev/null; then
     curl -sSL https://install.python-poetry.org | python -
+
+    success 'Poetry installed'
   else
-    echo '  Error: Python not found. Python is required to install Poetry.'
+    fail 'Python not found. Python is required to install Poetry.'
   fi
+else
+  success 'Poetry is already installed'
 fi
