@@ -4,9 +4,21 @@
 
 set -e
 
-brew install neovim
+DOTFILES_ROOT=$(pwd)
 
-# Install dependencies.
-brew install ripgrep
+source "$DOTFILES_ROOT/lib/logger.sh"
 
-git clone https://github.com/dam9000/kickstart-modular.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+info 'Installing Neovim'
+
+if command -v brew > /dev/null; then
+	brew install neovim
+
+	# Install dependencies.
+	brew install ripgrep
+
+	git clone https://github.com/dam9000/kickstart-modular.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+
+  success 'Neovim installed'
+else
+	fail 'Homebrew not found. Homebrew is required to install Neovim.'
+fi
