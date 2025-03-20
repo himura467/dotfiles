@@ -1,4 +1,15 @@
 [include]
-        path = ~/.gitconfig.local
+  path = ~/.gitconfig.local
 [core]
-        excludesfile = ~/.gitignore
+  excludesfile = ~/.gitignore
+[fetch]
+  prune = true
+[pull]
+  rebase = true
+[push]
+  default = current
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
