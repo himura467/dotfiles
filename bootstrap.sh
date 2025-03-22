@@ -120,22 +120,16 @@ set_macos_defaults () {
 
 set_homebrew () {
   if ! command -v brew > /dev/null; then
-    info 'Installing homebrew'
-
     $DOTFILES_ROOT/homebrew/install.sh
 
     source $DOTFILES_ROOT/homebrew/path.zsh
   else
-    info 'Updating homebrew'
-
     $DOTFILES_ROOT/homebrew/upgrade.sh
   fi
 }
 
 set_neovim () {
   if ! command -v nvim > /dev/null; then
-    info 'Installing neovim'
-
     $DOTFILES_ROOT/neovim/install.sh
   fi
 }
