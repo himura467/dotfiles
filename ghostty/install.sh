@@ -15,6 +15,7 @@ if command -v brew > /dev/null; then
   brew install --cask ghostty
 
   mkdir -p "$HOME/.config/ghostty"
+  overwrite_all=false backup_all=false skip_all=false
   link_file "$DOTFILES_ROOT/ghostty/config" "$HOME/.config/ghostty/config"
   success 'Ghostty installed'
 else
