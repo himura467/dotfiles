@@ -79,4 +79,4 @@ set_macos_defaults
 set_homebrew
 set_neovim
 
-echo '  All installed'
+success 'All installed'
