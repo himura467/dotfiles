@@ -1,0 +1,9 @@
+theme = catppuccin-frappe
+fullscreen = true
+macos-non-native-fullscreen = true
+background-opacity = 0.8
+
+font-feature = -dlig
+font-size = 16
+
+mouse-hide-while-typing = true
