@@ -1,4 +1,4 @@
-theme = catppuccin-frappe
+theme = jubi
 fullscreen = true
 macos-non-native-fullscreen = true
 background-opacity = 0.8
