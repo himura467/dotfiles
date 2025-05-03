@@ -21,3 +21,6 @@ for file in ${(M)config_files:#*/completion.zsh}; do
 done
 
 unset config_files
+
+# update ghostty theme
+$HOME/.dotfiles/ghostty/update_theme_randomly.pl
