@@ -22,14 +22,14 @@ setup_gitconfig () {
       git_authorname="$GIT_AUTHORNAME"
     else
       user 'What is your github author name?'
-      read -p '>' -e git_authorname
+      read -p '> ' -e git_authorname
     fi
 
     if [[ -n "$GIT_AUTHOREMAIL" ]]; then
       git_authoremail="$GIT_AUTHOREMAIL"
     else
       user 'What is your github author email?'
-      read -p '>' -e git_authoremail
+      read -p '> ' -e git_authoremail
     fi
 
     sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink

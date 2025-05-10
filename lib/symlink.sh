@@ -17,7 +17,7 @@ link_file () {
       else
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
-        read -p '>' -n 1 action
+        read -p '> ' -n 1 action
 
         case "$action" in
           o )
