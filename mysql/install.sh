@@ -16,7 +16,7 @@ if command -v brew > /dev/null; then
 
   user "Which MySQL version would you like to install?\n\
   Available versions:\n$available_versions"
-  read -p '>' mysql_version
+  read -p '> ' mysql_version
 
   if echo "$available_versions" | grep -q "^${mysql_version}$"; then
     info "Installing MySQL@${mysql_version}"
