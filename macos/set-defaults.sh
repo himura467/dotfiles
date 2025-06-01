@@ -34,6 +34,15 @@ defaults write com.apple.finder ShowPathbar -bool true
 defaults write com.apple.finder NewWindowTarget PfHm
 
 # Keyboard
+## Disable press-and-hold for keys in favor of key repeat.
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+## Set the key repeat rate to fast.
+defaults write NSGlobalDomain KeyRepeat -int 1
+
+## Set the delay until key repeat starts to short.
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
+
 ## Disable automatic capitalization.
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
