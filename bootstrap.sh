@@ -53,7 +53,7 @@ set_macos_defaults () {
   info 'Setting macOS defaults'
 
   if [[ "$(uname -s)" == 'Darwin' ]]; then
-    $DOTFILES_ROOT/macos/set-defaults.sh
+    $DOTFILES_ROOT/macos/set_defaults.sh
   fi
 }
 
