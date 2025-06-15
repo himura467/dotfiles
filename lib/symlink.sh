@@ -5,19 +5,20 @@
 link_file () {
   local src=$1 dst=$2
 
-  local overwrite= backup= skip=
+  local overwrite='' backup='' skip=''
   local action=
 
   if [[ -f "$dst" || -d "$dst" || -L "$dst" ]]; then
     if [[ "$overwrite_all" == 'false' && "$backup_all" == 'false' && "$skip_all" == 'false' ]]; then
-      local current_src="$(readlink $dst)"
+      local current_src
+      current_src="$(readlink "$dst")"
 
       if [[ "$current_src" == "$src" ]]; then
         skip=true;
       else
         user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
         [s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
-        read -p '> ' -n 1 action
+        read -r -p '> ' -n 1 action
 
         case "$action" in
           o )
