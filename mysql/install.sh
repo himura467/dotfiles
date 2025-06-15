@@ -4,7 +4,7 @@
 
 set -e
 
-DOTFILES_ROOT=$(cd $(dirname $0)/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
@@ -16,15 +16,15 @@ if command -v brew > /dev/null; then
 
   user "Which MySQL version would you like to install?\n\
   Available versions:\n$available_versions"
-  read -p '> ' mysql_version
+  read -r -p '> ' mysql_version
 
-  if echo "$available_versions" | grep -q "^${mysql_version}$"; then
-    info "Installing MySQL@${mysql_version}"
-    brew install mysql@${mysql_version}
+  if echo "$available_versions" | grep -q "^$mysql_version$"; then
+    info "Installing MySQL@$mysql_version"
+    brew install mysql@"$mysql_version"
     
     # Store the selected version for path.zsh
-    echo "$mysql_version" > "$(dirname $0)/.mysql-version"
-    success "MySQL@${mysql_version} installed"
+    echo "$mysql_version" > "$(dirname "$0")/.mysql-version"
+    success "MySQL@$mysql_version installed"
   else
     fail 'Invalid MySQL version. Please choose from the available versions listed above.'
   fi

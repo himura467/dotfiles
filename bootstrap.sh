@@ -22,14 +22,14 @@ setup_gitconfig () {
       git_authorname="$GIT_AUTHORNAME"
     else
       user 'What is your github author name?'
-      read -p '> ' -e git_authorname
+      read -r -p '> ' -e git_authorname
     fi
 
     if [[ -n "$GIT_AUTHOREMAIL" ]]; then
       git_authoremail="$GIT_AUTHOREMAIL"
     else
       user 'What is your github author email?'
-      read -p '> ' -e git_authoremail
+      read -r -p '> ' -e git_authoremail
     fi
 
     sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" git/gitconfig.local.symlink.example > git/gitconfig.local.symlink
@@ -43,7 +43,7 @@ install_dotfiles () {
 
   local overwrite_all=false backup_all=false skip_all=false
 
-  for src in $(find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*'); do
+  find -H "$DOTFILES_ROOT" -maxdepth 2 -name '*.symlink' -not -path '*.git*' -print0 | while IFS= read -r -d '' src; do
     dst="$HOME/.$(basename "${src%.*}")"
     link_file "$src" "$dst"
   done
@@ -53,23 +53,23 @@ set_macos_defaults () {
   info 'Setting macOS defaults'
 
   if [[ "$(uname -s)" == 'Darwin' ]]; then
-    $DOTFILES_ROOT/macos/set_defaults.sh
+    "$DOTFILES_ROOT"/macos/set_defaults.sh
   fi
 }
 
 set_homebrew () {
   if ! command -v brew > /dev/null; then
-    $DOTFILES_ROOT/homebrew/install.sh
+    "$DOTFILES_ROOT"/homebrew/install.sh
 
-    source $DOTFILES_ROOT/homebrew/path.zsh
+    source "$DOTFILES_ROOT"/homebrew/path.zsh
   else
-    $DOTFILES_ROOT/homebrew/upgrade.sh
+    "$DOTFILES_ROOT"/homebrew/upgrade.sh
   fi
 }
 
 set_neovim () {
   if ! command -v nvim > /dev/null; then
-    $DOTFILES_ROOT/neovim/install.sh
+    "$DOTFILES_ROOT"/neovim/install.sh
   fi
 }
 

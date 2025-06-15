@@ -17,7 +17,6 @@ if ! command -v go > /dev/null; then
     success 'Go installed'
   else
     fail 'Homebrew not found. Homebrew is required to install Go.'
-    exit 1
   fi
 else
   success 'Go is already installed'
@@ -25,7 +24,7 @@ fi
 
 if ! command -v wire > /dev/null; then
   user 'Do you want to install Wire?'
-  read -p '[Y/n] ' yn
+  read -r -p '[Y/n] ' yn
   case "$yn" in
     [Nn]* )
       info 'Skipping Wire installation'
