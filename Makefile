@@ -54,6 +54,19 @@ test-macos:
 	@defaults read NSGlobalDomain NSAutomaticSpellingCorrectionEnabled > /dev/null 2>&1 && \
 	([[ "$(shell defaults read NSGlobalDomain NSAutomaticSpellingCorrectionEnabled)" = 0 ]] && echo 'OK. NSAutomaticSpellingCorrectionEnabled is correct.' || (echo 'FAIL. NSAutomaticSpellingCorrectionEnabled is not correct.' && exit 1)) || \
 	echo 'INFO: NSAutomaticSpellingCorrectionEnabled is not set. Skipping test.'
+	# Screenshots
+	@defaults read com.apple.screencapture location > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.screencapture location)" = ~/Downloads ]] && echo 'OK. Screenshot location is correct.' || (echo 'FAIL. Screenshot location is not correct.' && exit 1)) || \
+	echo 'INFO: Screenshot location is not set. Skipping test.'
+	@defaults read com.apple.screencapture name > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.screencapture name)" = screenshot ]] && echo 'OK. Screenshot name is correct.' || (echo 'FAIL. Screenshot name is not correct.' && exit 1)) || \
+	echo 'INFO: Screenshot name is not set. Skipping test.'
+	@defaults read com.apple.screencapture disable-shadow > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.screencapture disable-shadow)" = 1 ]] && echo 'OK. Screenshot shadow is disabled.' || (echo 'FAIL. Screenshot shadow is not disabled.' && exit 1)) || \
+	echo 'INFO: Screenshot shadow is not set. Skipping test.'
+	@defaults read com.apple.screencapture show-thumbnail > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.screencapture show-thumbnail)" = 0 ]] && echo 'OK. Screenshot thumbnail is disabled.' || (echo 'FAIL. Screenshot thumbnail is not disabled.' && exit 1)) || \
+	echo 'INFO: Screenshot thumbnail is not set. Skipping test.'
 	# Trackpad
 	@defaults read -g com.apple.trackpad.scaling > /dev/null 2>&1 && \
 	([[ "$(shell defaults read -g com.apple.trackpad.scaling)" = 2.5 ]] && echo 'OK. Trackpad scaling is correct.' || (echo 'FAIL. Trackpad scaling is not correct.' && exit 1)) || \
