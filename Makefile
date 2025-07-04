@@ -61,10 +61,10 @@ test-macos:
 	@defaults read com.apple.screencapture name > /dev/null 2>&1 && \
 	([[ "$(shell defaults read com.apple.screencapture name)" = screenshot ]] && echo 'OK. Screenshot name is correct.' || (echo 'FAIL. Screenshot name is not correct.' && exit 1)) || \
 	echo 'INFO: Screenshot name is not set. Skipping test.'
-	@defaults write com.apple.screencapture disable-shadow > /dev/null 2>&1 && \
+	@defaults read com.apple.screencapture disable-shadow > /dev/null 2>&1 && \
 	([[ "$(shell defaults read com.apple.screencapture disable-shadow)" = 1 ]] && echo 'OK. Screenshot shadow is disabled.' || (echo 'FAIL. Screenshot shadow is not disabled.' && exit 1)) || \
 	echo 'INFO: Screenshot shadow is not set. Skipping test.'
-	@defaults write com.apple.screencapture show-thumbnail > /dev/null 2>&1 && \
+	@defaults read com.apple.screencapture show-thumbnail > /dev/null 2>&1 && \
 	([[ "$(shell defaults read com.apple.screencapture show-thumbnail)" = 0 ]] && echo 'OK. Screenshot thumbnail is disabled.' || (echo 'FAIL. Screenshot thumbnail is not disabled.' && exit 1)) || \
 	echo 'INFO: Screenshot thumbnail is not set. Skipping test.'
 	# Trackpad
