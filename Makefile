@@ -10,6 +10,13 @@ test-dotfiles-exist:
 
 test-macos:
 	@echo 'Check if macOS settings are correct...'
+	# Desktop Services
+	@defaults read com.apple.desktopservices DSDontWriteNetworkStores > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.desktopservices DSDontWriteNetworkStores)" = 1 ]] && echo 'OK. .DS_Store files on network volumes are disabled.' || (echo 'FAIL. .DS_Store files on network volumes are not disabled.' && exit 1)) || \
+	echo 'INFO: .DS_Store files on network volumes are not set. Skipping test.'
+	@defaults read com.apple.desktopservices DSDontWriteUSBStores > /dev/null 2>&1 && \
+	([[ "$(shell defaults read com.apple.desktopservices DSDontWriteUSBStores)" = 1 ]] && echo 'OK. .DS_Store files on USB volumes are disabled.' || (echo 'FAIL. .DS_Store files on USB volumes are not disabled.' && exit 1)) || \
+	echo 'INFO: .DS_Store files on USB volumes are not set. Skipping test.'
 	# Dock
 	@defaults read com.apple.dock tilesize > /dev/null 2>&1 && \
 	([[ "$(shell defaults read com.apple.dock tilesize)" = 32 ]] && echo 'OK. Dock tilesize is correct.' || (echo 'FAIL. Dock tilesize is not correct.' && exit 1)) || \

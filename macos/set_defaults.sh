@@ -4,6 +4,11 @@
 
 set -e
 
+# Desktop Services
+## Disable the creation of .DS_Store files.
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
 # Dock
 ## Set the icon size of Dock items to 32 pixels.
 defaults write com.apple.dock tilesize -int 32
