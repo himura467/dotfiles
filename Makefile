@@ -25,6 +25,9 @@ test-macos:
 	@[[ "$(shell defaults read com.apple.finder ShowPathbar)" = 1 ]] && echo 'OK. ShowPathbar is correct.' || (echo 'FAIL. ShowPathbar is not correct.' && exit 1)
 	@[[ "$(shell defaults read com.apple.finder NewWindowTarget)" = PfHm ]] && echo 'OK. NewWindowTarget is correct.' || (echo 'FAIL. NewWindowTarget is not correct.' && exit 1)
 	# Keyboard
+	@[[ "$(shell defaults read -g ApplePressAndHoldEnabled)" = 0 ]] && echo 'OK. ApplePressAndHoldEnabled is correct.' || (echo 'FAIL. ApplePressAndHoldEnabled is not correct.' && exit 1)
+	@[[ "$(shell defaults read NSGlobalDomain KeyRepeat)" = 1 ]] && echo 'OK. KeyRepeat is correct.' || (echo 'FAIL. KeyRepeat is not correct.' && exit 1)
+	@[[ "$(shell defaults read NSGlobalDomain InitialKeyRepeat)" = 15 ]] && echo 'OK. InitialKeyRepeat is correct.' || (echo 'FAIL. InitialKeyRepeat is not correct.' && exit 1)
 	@[[ "$(shell defaults read NSGlobalDomain NSAutomaticCapitalizationEnabled)" = 0 ]] && echo 'OK. NSAutomaticCapitalizationEnabled is correct.' || (echo 'FAIL. NSAutomaticCapitalizationEnabled is not correct.' && exit 1)
 	@[[ "$(shell defaults read NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled)" = 0 ]] && echo 'OK. NSAutomaticPeriodSubstitutionEnabled is correct.' || (echo 'FAIL. NSAutomaticPeriodSubstitutionEnabled is not correct.' && exit 1)
 	@[[ "$(shell defaults read NSGlobalDomain NSAutomaticSpellingCorrectionEnabled)" = 0 ]] && echo 'OK. NSAutomaticSpellingCorrectionEnabled is correct.' || (echo 'FAIL. NSAutomaticSpellingCorrectionEnabled is not correct.' && exit 1)
