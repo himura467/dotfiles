@@ -44,6 +44,7 @@ test-git:
 	@echo 'Check if git is set up correctly...'
 	@[[ "$(shell git config --get user.name)" = "$(GIT_AUTHORNAME)" ]] && echo 'OK. Git user.name is correct.' || (echo 'FAIL. Git user.name is not correct.' && exit 1)
 	@[[ "$(shell git config --get user.email)" = "$(GIT_AUTHOREMAIL)" ]] && echo 'OK. Git user.email is correct.' || (echo 'FAIL. Git user.email is not correct.' && exit 1)
+	@[[ "$(shell git config --get credential.helper)" = 'osxkeychain' ]] && echo 'OK. Git credential.helper is set to osxkeychain.' || (echo 'FAIL. Git credential.helper is not set to osxkeychain.' && exit 1)
 
 test-brew:
 	@echo 'Check if Homebrew is installed...'
