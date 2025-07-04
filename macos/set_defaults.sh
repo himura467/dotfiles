@@ -57,6 +57,19 @@ defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 ## Disable automatic spelling correction.
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
+# Screenshots
+## Save screenshots to the ~/Downloads folder.
+defaults write com.apple.screencapture location ~/Downloads
+
+## Set the screenshot file name to "screenshot".
+defaults write com.apple.screencapture name screenshot
+
+## Disable the shadow in screenshots.
+defaults write com.apple.screencapture disable-shadow -bool yes
+
+## Disable the floating thumbnail in screenshots.
+defaults write com.apple.screencapture show-thumbnail -bool no
+
 # Trackpad
 ## Set tracking speed to 2.5.
 defaults write -g com.apple.trackpad.scaling 2.5
