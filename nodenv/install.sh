@@ -18,7 +18,7 @@ else
   success 'nodenv is already installed'
 fi
 
-eval "$(nodenv init -)"
+source "$DOTFILES_ROOT/nodenv/path.zsh"
 
 user 'Would you like to install a specific Node.js version? (y/n)'
 read -r -p '> ' install_node
