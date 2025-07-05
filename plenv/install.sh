@@ -28,7 +28,7 @@ if [[ "$install_perl" =~ ^[Yy]$ ]]; then
   available_versions=$(plenv install --list | grep -E '^[[:space:]]*[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^[[:space:]]*//' | head -10)
   
   user "Which Perl version would you like to install?\n\
-  Available versions (showing latest 10):\n$available_versions"
+Available versions (showing latest 10):\n$available_versions"
   read -r -p '> ' perl_version
   
   if echo "$available_versions" | grep -q "^$perl_version$"; then

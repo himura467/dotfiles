@@ -15,7 +15,7 @@ if command -v brew > /dev/null; then
   available_versions=$(brew search mysql@ | grep -E '^mysql@[0-9.]+$' | sed 's/mysql@//')
 
   user "Which MySQL version would you like to install?\n\
-  Available versions:\n$available_versions"
+Available versions:\n$available_versions"
   read -r -p '> ' mysql_version
 
   if echo "$available_versions" | grep -q "^$mysql_version$"; then
