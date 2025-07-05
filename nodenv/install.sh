@@ -11,9 +11,13 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 info 'Installing nodenv'
 
 if ! command -v nodenv > /dev/null; then
-  brew install nodenv
+  if command -v brew > /dev/null; then
+    brew install nodenv
 
-  success 'nodenv installed'
+    success 'nodenv installed'
+  else
+    fail 'Homebrew not found. Homebrew is required to install nodenv.'
+  fi
 else
   success 'nodenv is already installed'
 fi
