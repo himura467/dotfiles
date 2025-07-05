@@ -4,7 +4,7 @@
 
 set -e
 
-DOTFILES_ROOT=$(pwd)
+DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
