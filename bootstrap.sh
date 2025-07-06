@@ -57,26 +57,22 @@ set_macos_defaults () {
   fi
 }
 
-set_homebrew () {
-  if ! command -v brew > /dev/null; then
-    "$DOTFILES_ROOT"/homebrew/install.sh
-
-    source "$DOTFILES_ROOT"/homebrew/path.zsh
-  else
-    "$DOTFILES_ROOT"/homebrew/upgrade.sh
-  fi
-}
-
-set_neovim () {
-  if ! command -v nvim > /dev/null; then
-    "$DOTFILES_ROOT"/neovim/install.sh
-  fi
+run_all_installers () {
+  info 'Running all installers'
+  
+  local installers=()
+  while IFS= read -r -d '' installer; do
+    installers+=("$installer")
+  done < <(find -H "$DOTFILES_ROOT" -maxdepth 2 -name 'install.sh' -not -path '*.git*' -type f -print0 | sort -z)
+  for installer in "${installers[@]}"; do
+    info "Running installer: $installer"
+    "$installer"
+  done
 }
 
 setup_gitconfig
 install_dotfiles
 set_macos_defaults
-set_homebrew
-set_neovim
+run_all_installers
 
 success 'All installed'
