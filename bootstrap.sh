@@ -64,9 +64,18 @@ run_all_installers () {
   while IFS= read -r -d '' installer; do
     installers+=("$installer")
   done < <(find -H "$DOTFILES_ROOT" -maxdepth 2 -name 'install.sh' -not -path '*.git*' -type f -print0 | sort -z)
+  
   for installer in "${installers[@]}"; do
-    info "Running installer: $installer"
-    "$installer"
+    local installer_name=$(basename "$(dirname "$installer")")
+    user "Would you like to run $installer_name installer? (y/n)"
+    read -r -p '> ' run_installer
+    
+    if [[ "$run_installer" =~ ^[Yy]$ ]]; then
+      info "Running installer: $installer"
+      "$installer"
+    else
+      info "Skipping $installer_name installer"
+    fi
   done
 }
 
