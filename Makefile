@@ -84,10 +84,7 @@ test-installers:
 	# @command -v mysql > /dev/null && echo 'OK. mysql is installed.' || (echo 'FAIL. mysql is not installed.' && exit 1)
 	@command -v nvim > /dev/null && echo 'OK. neovim is installed.' || (echo 'FAIL. neovim is not installed.' && exit 1)
 	@command -v nodenv > /dev/null && echo 'OK. nodenv is installed.' || (echo 'FAIL. nodenv is not installed.' && exit 1)
-	# plenv is commented out because although installation succeeds in CI,
-	# the command is not found during testing due to PATH not being propagated
-	# between bootstrap.sh and Makefile execution contexts
-	# @command -v plenv > /dev/null && echo 'OK. plenv is installed.' || (echo 'FAIL. plenv is not installed.' && exit 1)
+	@(command -v plenv > /dev/null || [[ -x "$$HOME/.plenv/bin/plenv" ]]) && echo 'OK. plenv is installed.' || (echo 'FAIL. plenv is not installed.' && exit 1)
 	@command -v pnpm > /dev/null && echo 'OK. pnpm is installed.' || (echo 'FAIL. pnpm is not installed.' && exit 1)
 	@command -v poetry > /dev/null && echo 'OK. poetry is installed.' || (echo 'FAIL. poetry is not installed.' && exit 1)
 	@command -v pyenv > /dev/null && echo 'OK. pyenv is installed.' || (echo 'FAIL. pyenv is not installed.' && exit 1)
