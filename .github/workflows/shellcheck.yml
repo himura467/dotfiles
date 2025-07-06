@@ -7,7 +7,7 @@ on:
       - synchronize
       - reopened
     paths:
-      - *.sh
+      - "**.sh"
 
 jobs:
   shellcheck:
