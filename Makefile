@@ -1,5 +1,5 @@
 .PHONY: test
-test: test-dotfiles-exist test-macos test-git test-brew test-neovim
+test: test-dotfiles-exist test-macos test-git test-installers
 
 test-dotfiles-exist:
 	@echo 'Check if dotfiles exist...'
@@ -46,10 +46,34 @@ test-git:
 	@[[ "$(shell git config --get user.email)" = "$(GIT_AUTHOREMAIL)" ]] && echo 'OK. Git user.email is correct.' || (echo 'FAIL. Git user.email is not correct.' && exit 1)
 	@[[ "$(shell git config --get credential.helper)" = 'osxkeychain' ]] && echo 'OK. Git credential.helper is set to osxkeychain.' || (echo 'FAIL. Git credential.helper is not set to osxkeychain.' && exit 1)
 
-test-brew:
-	@echo 'Check if Homebrew is installed...'
-	@command -v brew > /dev/null && echo 'OK. Homebrew is installed.' || (echo 'FAIL. Homebrew is not installed.' && exit 1)
-
-test-neovim:
-	@echo 'Check if Neovim is installed...'
-	@command -v nvim > /dev/null && echo 'OK. Neovim is installed.' || (echo 'FAIL. Neovim is not installed.' && exit 1)
+test-installers:
+	@echo 'Check if tools installed by run_all_installers are available...'
+	# Core development tools
+	@command -v op > /dev/null && echo 'OK. 1password-cli is installed.' || (echo 'FAIL. 1password-cli is not installed.' && exit 1)
+	@command -v aws > /dev/null && echo 'OK. aws-cli is installed.' || (echo 'FAIL. aws-cli is not installed.' && exit 1)
+	# Claude Code is commented out because it requires interactive approval (pnpm approve-builds -g)
+	# which cannot be handled by the `yes` command in CI environments
+	# @command -v claude > /dev/null && echo 'OK. claude-code is installed.' || (echo 'FAIL. claude-code is not installed.' && exit 1)
+	@command -v direnv > /dev/null && echo 'OK. direnv is installed.' || (echo 'FAIL. direnv is not installed.' && exit 1)
+	@command -v docker > /dev/null && echo 'OK. docker is installed.' || (echo 'FAIL. docker is not installed.' && exit 1)
+	@command -v gcloud > /dev/null && echo 'OK. gcloud is installed.' || (echo 'FAIL. gcloud is not installed.' && exit 1)
+	@command -v ghostty > /dev/null && echo 'OK. ghostty is installed.' || (echo 'FAIL. ghostty is not installed.' && exit 1)
+	@command -v go > /dev/null && echo 'OK. go is installed.' || (echo 'FAIL. go is not installed.' && exit 1)
+	@command -v brew > /dev/null && echo 'OK. homebrew is installed.' || (echo 'FAIL. homebrew is not installed.' && exit 1)
+	# MySQL is commented out because the installer requires interactive version selection
+	# which cannot be handled by the `yes` command in CI environments
+	# @command -v mysql > /dev/null && echo 'OK. mysql is installed.' || (echo 'FAIL. mysql is not installed.' && exit 1)
+	@command -v nvim > /dev/null && echo 'OK. neovim is installed.' || (echo 'FAIL. neovim is not installed.' && exit 1)
+	@command -v nodenv > /dev/null && echo 'OK. nodenv is installed.' || (echo 'FAIL. nodenv is not installed.' && exit 1)
+	# plenv check uses fallback to direct binary because PATH changes from bootstrap.sh
+	# are not propagated to Makefile execution context in CI environments
+	@(command -v plenv > /dev/null || [[ -x "$$HOME/.plenv/bin/plenv" ]]) && echo 'OK. plenv is installed.' || (echo 'FAIL. plenv is not installed.' && exit 1)
+	@command -v pnpm > /dev/null && echo 'OK. pnpm is installed.' || (echo 'FAIL. pnpm is not installed.' && exit 1)
+	@command -v poetry > /dev/null && echo 'OK. poetry is installed.' || (echo 'FAIL. poetry is not installed.' && exit 1)
+	@command -v pyenv > /dev/null && echo 'OK. pyenv is installed.' || (echo 'FAIL. pyenv is not installed.' && exit 1)
+	@command -v sheldon > /dev/null && echo 'OK. sheldon is installed.' || (echo 'FAIL. sheldon is not installed.' && exit 1)
+	@command -v tfenv > /dev/null && echo 'OK. tfenv is installed.' || (echo 'FAIL. tfenv is not installed.' && exit 1)
+	# Applications
+	@ls /Applications/Docker.app > /dev/null 2>&1 && echo 'OK. Docker app is installed.' || (echo 'FAIL. Docker app is not installed.' && exit 1)
+	@ls /Applications/Ghostty.app > /dev/null 2>&1 && echo 'OK. Ghostty app is installed.' || (echo 'FAIL. Ghostty app is not installed.' && exit 1)
+	@ls /Applications/Raycast.app > /dev/null 2>&1 && echo 'OK. Raycast is installed.' || (echo 'FAIL. Raycast is not installed.' && exit 1)

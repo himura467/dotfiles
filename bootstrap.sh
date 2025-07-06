@@ -57,26 +57,43 @@ set_macos_defaults () {
   fi
 }
 
-set_homebrew () {
-  if ! command -v brew > /dev/null; then
-    "$DOTFILES_ROOT"/homebrew/install.sh
-
-    source "$DOTFILES_ROOT"/homebrew/path.zsh
-  else
-    "$DOTFILES_ROOT"/homebrew/upgrade.sh
-  fi
-}
-
-set_neovim () {
-  if ! command -v nvim > /dev/null; then
-    "$DOTFILES_ROOT"/neovim/install.sh
-  fi
+run_all_installers () {
+  info 'Running all installers'
+  
+  local installer_dirs=()
+  while IFS= read -r -d '' dir; do
+    [[ -f "$dir/install.sh" ]] && installer_dirs+=("$dir")
+  done < <(find -H "$DOTFILES_ROOT" -maxdepth 1 -type d -not -path '*.git*' -print0 | sort -z)
+  
+  for installer_dir in "${installer_dirs[@]}"; do
+    local installer_name
+    installer_name=$(basename "$installer_dir")
+    user "Would you like to run $installer_name installer? (y/n)"
+    read -r -p '> ' run_installer
+    
+    if [[ "$run_installer" =~ ^[Yy]$ ]]; then
+      info "Running installer: $installer_dir/install.sh"
+      "$installer_dir/install.sh"
+      
+      if [[ -f "$installer_dir/path.zsh" ]]; then
+        # Skip zsh-specific path.zsh files that contain syntax incompatible with bash
+        if [[ "$installer_name" == 'direnv' || "$installer_name" == 'sheldon' ]]; then
+          info "Skipping $installer_name path.zsh due to bash/zsh compatibility issues"
+        else
+          info "Sourcing path configuration: $installer_dir/path.zsh"
+          # shellcheck source=/dev/null
+          source "$installer_dir/path.zsh"
+        fi
+      fi
+    else
+      info "Skipping $installer_name installer"
+    fi
+  done
 }
 
 setup_gitconfig
 install_dotfiles
 set_macos_defaults
-set_homebrew
-set_neovim
+run_all_installers
 
 success 'All installed'
