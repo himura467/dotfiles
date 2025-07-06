@@ -81,6 +81,7 @@ run_all_installers () {
           info 'Skipping direnv path.zsh due to bash/zsh compatibility issues'
         else
           info "Sourcing path configuration: $installer_dir/path.zsh"
+          # shellcheck source=/dev/null
           source "$installer_dir/path.zsh"
         fi
       fi
