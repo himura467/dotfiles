@@ -10,15 +10,23 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 
 info 'Installing Neovim'
 
-if command -v brew > /dev/null; then
-	brew install neovim
-
-	# Install dependencies.
-	brew install ripgrep
-
-	git clone https://github.com/dam9000/kickstart-modular.nvim.git "$XDG_CONFIG_HOME:-$HOME/.config/nvim"
-
-  success 'Neovim installed'
-else
-	fail 'Homebrew not found. Homebrew is required to install Neovim.'
+if ! command -v brew > /dev/null; then
+  user 'Homebrew not found. Would you like to install Homebrew first? (y/n)'
+  read -r -p '> ' install_brew
+  
+  if [[ "$install_brew" =~ ^[Yy]$ ]]; then
+    source "$DOTFILES_ROOT/homebrew/install.sh"
+    source "$DOTFILES_ROOT/homebrew/path.zsh"
+  else
+    fail 'Homebrew is required to install Neovim.'
+  fi
 fi
+
+brew install neovim
+
+# Install dependencies.
+brew install ripgrep
+
+git clone https://github.com/dam9000/kickstart-modular.nvim.git "$XDG_CONFIG_HOME:-$HOME/.config/nvim"
+
+success 'Neovim installed'
