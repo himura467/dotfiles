@@ -60,21 +60,25 @@ set_macos_defaults () {
 run_all_installers () {
   info 'Running all installers'
   
-  local installers=()
-  while IFS= read -r -d '' installer; do
-    installers+=("$installer")
-  done < <(find -H "$DOTFILES_ROOT" -maxdepth 2 -name 'install.sh' -not -path '*.git*' -type f -print0 | sort -z)
+  local installer_dirs=()
+  while IFS= read -r -d '' dir; do
+    [[ -f "$dir/install.sh" ]] && installer_dirs+=("$dir")
+  done < <(find -H "$DOTFILES_ROOT" -maxdepth 1 -type d -not -path '*.git*' -print0 | sort -z)
   
-  for installer in "${installers[@]}"; do
+  for installer_dir in "${installer_dirs[@]}"; do
     local installer_name
-    installer_name=$(basename "$(dirname "$installer")")
+    installer_name=$(basename "$installer_dir")
     user "Would you like to run $installer_name installer? (y/n)"
     read -r -p '> ' run_installer
     
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
-      info "Running installer: $installer"
-      "$installer"
-      [[ -f "$HOME/.zshrc" ]] && source "$HOME/.zshrc"
+      info "Running installer: $installer_dir/install.sh"
+      "$installer_dir/install.sh"
+      
+      if [[ -f "$installer_dir/path.zsh" ]]; then
+        info "Sourcing path configuration: $installer_dir/path.zsh"
+        source "$installer_dir/path.zsh"
+      fi
     else
       info "Skipping $installer_name installer"
     fi
