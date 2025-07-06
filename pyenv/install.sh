@@ -11,13 +11,20 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 info 'Installing pyenv'
 
 if ! command -v pyenv > /dev/null; then
-  if command -v brew > /dev/null; then
-    brew install pyenv
+  if ! command -v brew > /dev/null; then
+    user 'Homebrew not found. Would you like to install Homebrew first? (y/n)'
+    read -r -p '> ' install_brew
     
-    success 'pyenv installed'
-  else
-    fail 'Homebrew not found. Homebrew is required to install pyenv.'
+    if [[ "$install_brew" =~ ^[Yy]$ ]]; then
+      source "$DOTFILES_ROOT/homebrew/install.sh"
+      source "$DOTFILES_ROOT/homebrew/path.zsh"
+    else
+      fail 'Homebrew is required to install pyenv.'
+    fi
   fi
+  brew install pyenv
+  
+  success 'pyenv installed'
 else
   success 'pyenv is already installed'
 fi
