@@ -66,7 +66,8 @@ run_all_installers () {
   done < <(find -H "$DOTFILES_ROOT" -maxdepth 2 -name 'install.sh' -not -path '*.git*' -type f -print0 | sort -z)
   
   for installer in "${installers[@]}"; do
-    local installer_name=$(basename "$(dirname "$installer")")
+    local installer_name
+    installer_name=$(basename "$(dirname "$installer")")
     user "Would you like to run $installer_name installer? (y/n)"
     read -r -p '> ' run_installer
     
