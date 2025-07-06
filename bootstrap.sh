@@ -76,8 +76,13 @@ run_all_installers () {
       "$installer_dir/install.sh"
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
-        info "Sourcing path configuration: $installer_dir/path.zsh"
-        source "$installer_dir/path.zsh"
+        # Skip direnv path.zsh because it contains zsh-specific syntax that causes syntax errors when sourced in bash
+        if [[ "$installer_name" == 'direnv' ]]; then
+          info 'Skipping direnv path.zsh due to bash/zsh compatibility issues'
+        else
+          info "Sourcing path configuration: $installer_dir/path.zsh"
+          source "$installer_dir/path.zsh"
+        fi
       fi
     else
       info "Skipping $installer_name installer"
