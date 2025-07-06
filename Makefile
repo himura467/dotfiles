@@ -1,24 +1,5 @@
 .PHONY: test
-test: test-dotfiles-exist test-macos test-git ci-debug test-installers
-
-ci-debug:
-	@echo 'Debug information for plenv installation...'
-	@echo 'Current PATH:'
-	@echo "$$PATH"
-	@echo 'Home directory:'
-	@echo "$$HOME"
-	@echo 'Check if .plenv directory exists:'
-	@ls -la "$$HOME/.plenv" 2>/dev/null || echo "Directory $$HOME/.plenv does not exist"
-	@echo 'Check if plenv binary exists:'
-	@ls -la "$$HOME/.plenv/bin/plenv" 2>/dev/null || echo "Binary $$HOME/.plenv/bin/plenv does not exist"
-	@echo 'Check if plenv is in PATH:'
-	@command -v plenv && echo "plenv found in PATH" || echo "plenv NOT found in PATH"
-	@echo 'Try to execute plenv directly:'
-	@$$HOME/.plenv/bin/plenv --version 2>/dev/null || echo "Cannot execute plenv directly"
-	@echo 'Check shell:'
-	@echo "SHELL: $$SHELL"
-	@echo 'Check if path.zsh was sourced correctly:'
-	@[[ -f "$$HOME/.dotfiles/plenv/path.zsh" ]] && echo "path.zsh exists" || echo "path.zsh missing"
+test: test-dotfiles-exist test-macos test-git test-installers
 
 test-dotfiles-exist:
 	@echo 'Check if dotfiles exist...'
