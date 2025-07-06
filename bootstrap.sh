@@ -74,6 +74,7 @@ run_all_installers () {
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
       info "Running installer: $installer"
       "$installer"
+      source "$HOME/.zshrc"
     else
       info "Skipping $installer_name installer"
     fi
