@@ -57,11 +57,11 @@ test-installers:
 	@command -v gcloud > /dev/null && echo 'OK. gcloud is installed.' || (echo 'FAIL. gcloud is not installed.' && exit 1)
 	@command -v ghostty > /dev/null && echo 'OK. ghostty is installed.' || (echo 'FAIL. ghostty is not installed.' && exit 1)
 	@command -v go > /dev/null && echo 'OK. go is installed.' || (echo 'FAIL. go is not installed.' && exit 1)
-	@command -v brew > /dev/null && echo 'OK. Homebrew is installed.' || (echo 'FAIL. Homebrew is not installed.' && exit 1)
+	@command -v brew > /dev/null && echo 'OK. homebrew is installed.' || (echo 'FAIL. homebrew is not installed.' && exit 1)
 	# MySQL is commented out because the installer requires interactive version selection
 	# which cannot be handled by the `yes` command in CI environments
 	# @command -v mysql > /dev/null && echo 'OK. mysql is installed.' || (echo 'FAIL. mysql is not installed.' && exit 1)
-	@command -v nvim > /dev/null && echo 'OK. Neovim is installed.' || (echo 'FAIL. Neovim is not installed.' && exit 1)
+	@command -v nvim > /dev/null && echo 'OK. neovim is installed.' || (echo 'FAIL. neovim is not installed.' && exit 1)
 	@command -v nodenv > /dev/null && echo 'OK. nodenv is installed.' || (echo 'FAIL. nodenv is not installed.' && exit 1)
 	@command -v plenv > /dev/null && echo 'OK. plenv is installed.' || (echo 'FAIL. plenv is not installed.' && exit 1)
 	@command -v pnpm > /dev/null && echo 'OK. pnpm is installed.' || (echo 'FAIL. pnpm is not installed.' && exit 1)
