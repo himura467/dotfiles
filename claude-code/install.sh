@@ -25,6 +25,9 @@ fi
 
 pnpm add -g @anthropic-ai/claude-code
 
+info 'Approving builds for Claude Code'
+pnpm approve-builds -g
+
 mkdir -p "$HOME/.claude"
 overwrite_all=false backup_all=false skip_all=false
 link_file "$DOTFILES_ROOT/claude-code/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
