@@ -77,3 +77,4 @@ test-installers:
 	@ls /Applications/Docker.app > /dev/null 2>&1 && echo 'OK. Docker app is installed.' || (echo 'FAIL. Docker app is not installed.' && exit 1)
 	@ls /Applications/Ghostty.app > /dev/null 2>&1 && echo 'OK. Ghostty app is installed.' || (echo 'FAIL. Ghostty app is not installed.' && exit 1)
 	@ls /Applications/Raycast.app > /dev/null 2>&1 && echo 'OK. Raycast is installed.' || (echo 'FAIL. Raycast is not installed.' && exit 1)
+	@ls "/Applications/Visual Studio Code.app" > /dev/null 2>&1 && echo 'OK. Visual Studio Code is installed.' || (echo 'FAIL. Visual Studio Code is not installed.' && exit 1)
