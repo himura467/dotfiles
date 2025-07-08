@@ -22,7 +22,10 @@ jobs:
         id: sh-changed
         run: |
           changed_files=$(git diff ${{ github.event.pull_request.base.sha }}.. --name-only --diff-filter=AM -- '*.sh')
-          echo "files=$changed_files" >> $GITHUB_OUTPUT
+          delimiter="$(openssl rand -hex 8)"
+          echo "files<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$changed_files" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
           echo "Changed shell files: $changed_files"
       - name: Run shellcheck
         if: steps.sh-changed.outputs.files != ''
