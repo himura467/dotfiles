@@ -38,8 +38,8 @@ if [[ "$install_python" =~ ^[Yy]$ ]]; then
   available_versions=$(pyenv install --list | grep -E '^[[:space:]]*[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^[[:space:]]*//' | tail -100)
   
   user 'Which Python version would you like to install?'
-  user 'Available versions (showing latest 100):'
-  user "$available_versions"
+  info 'Available versions (showing latest 100):'
+  info_list "$available_versions"
   read -r -p '> ' python_version
   
   if echo "$available_versions" | grep -q "^$python_version$"; then

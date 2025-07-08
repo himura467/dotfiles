@@ -17,7 +17,7 @@ link_file () {
         skip=true;
       else
         user "File already exists: $dst ($(basename "$src")), what do you want to do?"
-        user '[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?'
+        info '[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?'
         read -r -p '> ' -n 1 action
 
         case "$action" in
