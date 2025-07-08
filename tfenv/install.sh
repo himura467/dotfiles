@@ -35,8 +35,9 @@ read -r -p '> ' install_terraform
 if [[ "$install_terraform" =~ ^[Yy]$ ]]; then
   available_versions=$(tfenv list-remote | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -10)
   
-  user "Which Terraform version would you like to install?\n\
-Available versions (showing latest 10):\n$available_versions"
+  user 'Which Terraform version would you like to install?'
+  user 'Available versions (showing latest 10):'
+  user "$available_versions"
   read -r -p '> ' terraform_version
   
   if echo "$available_versions" | grep -q "^$terraform_version$"; then

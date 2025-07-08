@@ -37,8 +37,9 @@ read -r -p '> ' install_node
 if [[ "$install_node" =~ ^[Yy]$ ]]; then
   available_versions=$(nodenv install --list | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | tail -10)
   
-  user "Which Node.js version would you like to install?\n\
-Available versions (showing latest 10):\n$available_versions"
+  user 'Which Node.js version would you like to install?'
+  user 'Available versions (showing latest 10):'
+  user "$available_versions"
   read -r -p '> ' node_version
   
   if echo "$available_versions" | grep -q "^$node_version$"; then
