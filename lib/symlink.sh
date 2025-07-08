@@ -16,8 +16,8 @@ link_file () {
       if [[ "$current_src" == "$src" ]]; then
         skip=true;
       else
-        user "File already exists: $dst ($(basename "$src")), what do you want to do?\n\
-[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?"
+        user "File already exists: $dst ($(basename "$src")), what do you want to do?"
+        info '[s]kip, [S]kip all, [o]verwrite, [O]verwrite all, [b]ackup, [B]ackup all?'
         read -r -p '> ' -n 1 action
 
         case "$action" in
