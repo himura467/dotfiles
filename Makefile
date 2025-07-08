@@ -59,6 +59,7 @@ test-installers:
 	@command -v gcloud > /dev/null && echo 'OK. gcloud is installed.' || (echo 'FAIL. gcloud is not installed.' && exit 1)
 	@command -v ghostty > /dev/null && echo 'OK. ghostty is installed.' || (echo 'FAIL. ghostty is not installed.' && exit 1)
 	@command -v go > /dev/null && echo 'OK. go is installed.' || (echo 'FAIL. go is not installed.' && exit 1)
+	@command -v wire > /dev/null && echo 'OK. wire is installed.' || (echo 'FAIL. wire is not installed.' && exit 1)
 	@command -v brew > /dev/null && echo 'OK. homebrew is installed.' || (echo 'FAIL. homebrew is not installed.' && exit 1)
 	# MySQL is commented out because the installer requires interactive version selection
 	# which cannot be handled by the `yes` command in CI environments
