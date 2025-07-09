@@ -2,7 +2,7 @@
 #
 # Set macOS defaults.
 
-set -e
+set -euo pipefail
 
 # Desktop Services
 ## Disable the creation of .DS_Store files.

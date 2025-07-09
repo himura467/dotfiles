@@ -2,7 +2,7 @@
 #
 # Bootstrap script for setting up.
 
-set -e
+set -euo pipefail
 
 DOTFILES_ROOT=$(pwd)
 
