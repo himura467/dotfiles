@@ -77,7 +77,7 @@ run_all_installers () {
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
         # Skip zsh-specific path.zsh files that contain syntax incompatible with bash
-        if [[ "$installer_name" == 'direnv' || "$installer_name" == 'sheldon' ]]; then
+        if [[ "$installer_name" == 'direnv' || "$installer_name" == 'gcloud' || "$installer_name" == 'sheldon' ]]; then
           info "Skipping $installer_name path.zsh due to bash/zsh compatibility issues"
         else
           info "Sourcing path configuration: $installer_dir/path.zsh"
