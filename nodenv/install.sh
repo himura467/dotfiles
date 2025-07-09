@@ -2,7 +2,7 @@
 #
 # Install nodenv.
 
-set -e
+set -euo pipefail
 
 DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
 

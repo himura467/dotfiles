@@ -30,7 +30,9 @@ jobs:
       - name: Run shellcheck
         if: steps.sh-changed.outputs.files != ''
         run: |
-          for file in ${{ steps.sh-changed.outputs.files }}; do
-            echo "Checking $file"
-            shellcheck -x "$file"
-          done
+          while IFS= read -r file; do
+            if [[ -n "$file" ]]; then
+              echo "Checking $file"
+              shellcheck -x "$file"
+            fi
+          done <<< "${{ steps.sh-changed.outputs.files }}"
