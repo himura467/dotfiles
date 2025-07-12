@@ -1,5 +1,6 @@
 {
   "workbench.startupEditor": "none",
+  "update.showReleaseNotes": false,
   "editor.minimap.enabled": false,
   "[json]": {
     "editor.tabSize": 2,
