@@ -15,7 +15,7 @@ if ! command -v npm > /dev/null; then
   read -r -p '> ' install_node
   
   if [[ "$install_node" =~ ^[Yy]$ ]]; then
-    source "$DOTFILES_ROOT/nodenv/install.sh"
+    "$DOTFILES_ROOT/nodenv/install.sh"
     source "$DOTFILES_ROOT/nodenv/path.zsh"
   else
     fail 'npm is required to install pnpm.'

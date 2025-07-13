@@ -16,7 +16,7 @@ if ! command -v brew > /dev/null; then
   read -r -p '> ' install_brew
   
   if [[ "$install_brew" =~ ^[Yy]$ ]]; then
-    source "$DOTFILES_ROOT/homebrew/install.sh"
+    "$DOTFILES_ROOT/homebrew/install.sh"
     source "$DOTFILES_ROOT/homebrew/path.zsh"
   else
     fail 'Homebrew is required to install Visual Studio Code.'
