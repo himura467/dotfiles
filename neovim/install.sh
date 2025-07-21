@@ -7,6 +7,7 @@ set -euo pipefail
 DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
+source "$DOTFILES_ROOT/lib/symlink.sh"
 
 info 'Installing Neovim'
 
@@ -27,6 +28,7 @@ brew install neovim
 # Install dependencies.
 brew install ripgrep
 
-git clone https://github.com/dam9000/kickstart-modular.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}/nvim"
-
+mkdir -p "${XDG_CONFIG_HOME:-$HOME}/.config"
+overwrite_all=false backup_all=false skip_all=false
+link_file "$DOTFILES_ROOT/neovim/nvim" "${XDG_CONFIG_HOME:-$HOME}/.config/nvim"
 success 'Neovim installed'
