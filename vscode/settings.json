@@ -5,5 +5,8 @@
   "[json]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true
+  },
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
   }
 }
