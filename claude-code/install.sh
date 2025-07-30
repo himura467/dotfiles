@@ -16,7 +16,7 @@ if ! command -v pnpm > /dev/null; then
   read -r -p '> ' install_pnpm
   
   if [[ "$install_pnpm" =~ ^[Yy]$ ]]; then
-    "$DOTFILES_ROOT/pnpm/install.sh"
+    source "$DOTFILES_ROOT/pnpm/install.sh"
     source "$DOTFILES_ROOT/pnpm/path.zsh"
   else
     fail 'pnpm is required to install Claude Code.'
