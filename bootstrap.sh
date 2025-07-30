@@ -73,7 +73,7 @@ run_all_installers () {
     
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
       info "Running installer: $installer_dir/install.sh"
-      "$installer_dir/install.sh"
+      source "$installer_dir/install.sh"
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
         # Skip zsh-specific path.zsh files that contain syntax incompatible with bash
