@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 source "$DOTFILES_ROOT/lib/symlink.sh"

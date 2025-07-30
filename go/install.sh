@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
@@ -30,16 +30,21 @@ else
 fi
 
 if ! command -v wire > /dev/null; then
-  user 'Do you want to install Wire?'
-  read -r -p '[Y/n] ' yn
-  case "$yn" in
-    [Nn]* )
-      info 'Skipping Wire installation'
-      ;;
-    * )
-      info 'Installing Wire'
-      go install github.com/google/wire/cmd/wire@latest
-      success 'Wire installed successfully'
-      ;;
-  esac
+  # Skip Wire installation in CI environments
+  if [[ "${CI:-}" == 'true' ]]; then
+    info 'Skipping Wire installation in CI environment'
+  else
+    user 'Do you want to install Wire?'
+    read -r -p '[Y/n] ' yn
+    case "$yn" in
+      [Nn]* )
+        info 'Skipping Wire installation'
+        ;;
+      * )
+        info 'Installing Wire'
+        go install github.com/google/wire/cmd/wire@latest
+        success 'Wire installed successfully'
+        ;;
+    esac
+  fi
 fi

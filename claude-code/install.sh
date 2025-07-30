@@ -4,12 +4,18 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 source "$DOTFILES_ROOT/lib/symlink.sh"
 
 info 'Installing Claude Code'
+
+# Skip Claude Code installation in CI environments (requires interactive approval)
+if [[ "${CI:-}" == 'true' ]]; then
+  info 'Skipping Claude Code installation in CI environment'
+  return 0
+fi
 
 if ! command -v pnpm > /dev/null; then
   user 'pnpm not found. Would you like to install pnpm first? (y/n)'

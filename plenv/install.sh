@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
@@ -20,6 +20,12 @@ else
 fi
 
 source "$DOTFILES_ROOT/plenv/path.zsh"
+
+# Skip Perl version installation in CI environments
+if [[ "${CI:-}" == 'true' ]]; then
+  info 'Skipping Perl version installation in CI environment'
+  return 0
+fi
 
 user 'Would you like to install a specific Perl version? (y/n)'
 read -r -p '> ' install_perl

@@ -53,7 +53,7 @@ set_macos_defaults () {
   info 'Setting macOS defaults'
 
   if [[ "$(uname -s)" == 'Darwin' ]]; then
-    "$DOTFILES_ROOT"/macos/set_defaults.sh
+    source "$DOTFILES_ROOT/macos/set_defaults.sh"
   fi
 }
 
@@ -73,7 +73,8 @@ run_all_installers () {
     
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
       info "Running installer: $installer_dir/install.sh"
-      "$installer_dir/install.sh"
+      # shellcheck source=/dev/null
+      source "$installer_dir/install.sh"
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
         # Skip zsh-specific path.zsh files that contain syntax incompatible with bash
@@ -82,7 +83,9 @@ run_all_installers () {
         else
           info "Sourcing path configuration: $installer_dir/path.zsh"
           # shellcheck source=/dev/null
-          source "$installer_dir/path.zsh"
+          if ! source "$installer_dir/path.zsh" 2 > /dev/null; then
+            warn "Failed to source $installer_dir/path.zsh, continuing..."
+          fi
         fi
       fi
     else

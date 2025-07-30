@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
@@ -27,6 +27,12 @@ if ! command -v uv > /dev/null; then
   success 'uv installed'
 else
   success 'uv is already installed'
+fi
+
+# Skip Python version installation in CI environments
+if [[ "${CI:-}" == 'true' ]]; then
+  info 'Skipping Python version installation in CI environment'
+  return 0
 fi
 
 user 'Would you like to install a specific Python version? (y/n)'
