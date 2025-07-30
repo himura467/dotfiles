@@ -18,14 +18,14 @@ setup_gitconfig () {
       git_credential='osxkeychain'
     fi
 
-    if [[ -n "$GIT_AUTHORNAME" ]]; then
+    if [[ -n "${GIT_AUTHORNAME:-}" ]]; then
       git_authorname="$GIT_AUTHORNAME"
     else
       user 'What is your github author name?'
       read -r -p '> ' -e git_authorname
     fi
 
-    if [[ -n "$GIT_AUTHOREMAIL" ]]; then
+    if [[ -n "${GIT_AUTHOREMAIL:-}" ]]; then
       git_authoremail="$GIT_AUTHOREMAIL"
     else
       user 'What is your github author email?'
@@ -73,7 +73,7 @@ run_all_installers () {
     
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
       info "Running installer: $installer_dir/install.sh"
-      "$installer_dir/install.sh"
+      source "$installer_dir/install.sh"
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
         # Skip zsh-specific path.zsh files that contain syntax incompatible with bash
