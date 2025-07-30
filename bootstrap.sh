@@ -73,6 +73,7 @@ run_all_installers () {
     
     if [[ "$run_installer" =~ ^[Yy]$ ]]; then
       info "Running installer: $installer_dir/install.sh"
+      # shellcheck source=/dev/null
       source "$installer_dir/install.sh"
       
       if [[ -f "$installer_dir/path.zsh" ]]; then
