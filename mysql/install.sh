@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES_ROOT=$(cd "$(dirname "$0")"/..; pwd)
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 
 source "$DOTFILES_ROOT/lib/logger.sh"
 
@@ -35,7 +35,7 @@ if echo "$available_versions" | grep -q "^$mysql_version$"; then
   brew install mysql@"$mysql_version"
   
   # Store the selected version for path.zsh
-  echo "$mysql_version" > "$(dirname "$0")/.mysql-version"
+  echo "$mysql_version" > "$(dirname "${BASH_SOURCE[0]}")/.mysql-version"
   success "MySQL@$mysql_version installed"
 else
   fail 'Invalid MySQL version. Please choose from the available versions listed above.'
