@@ -83,7 +83,9 @@ run_all_installers () {
         else
           info "Sourcing path configuration: $installer_dir/path.zsh"
           # shellcheck source=/dev/null
-          source "$installer_dir/path.zsh"
+          if ! source "$installer_dir/path.zsh" 2 > /dev/null; then
+            warn "Failed to source $installer_dir/path.zsh, continuing..."
+          fi
         fi
       fi
     else
