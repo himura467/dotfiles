@@ -24,7 +24,7 @@ source "$DOTFILES_ROOT/plenv/path.zsh"
 # Skip Perl version installation in CI environments
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping Perl version installation in CI environment'
-  exit 0
+  return 0
 fi
 
 user 'Would you like to install a specific Perl version? (y/n)'

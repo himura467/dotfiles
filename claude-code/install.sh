@@ -14,7 +14,7 @@ info 'Installing Claude Code'
 # Skip Claude Code installation in CI environments (requires interactive approval)
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping Claude Code installation in CI environment'
-  exit 0
+  return 0
 fi
 
 if ! command -v pnpm > /dev/null; then

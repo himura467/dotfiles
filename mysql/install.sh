@@ -13,7 +13,7 @@ info 'Installing MySQL'
 # Skip MySQL installation in CI environments
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping MySQL installation in CI environment'
-  exit 0
+  return 0
 fi
 
 if ! command -v brew > /dev/null; then

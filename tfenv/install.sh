@@ -32,7 +32,7 @@ fi
 # Skip Terraform version installation in CI environments
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping Terraform version installation in CI environment'
-  exit 0
+  return 0
 fi
 
 user "Would you like to install a specific Terraform version? (y/n)"

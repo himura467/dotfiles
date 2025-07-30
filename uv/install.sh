@@ -32,7 +32,7 @@ fi
 # Skip Python version installation in CI environments
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping Python version installation in CI environment'
-  exit 0
+  return 0
 fi
 
 user 'Would you like to install a specific Python version? (y/n)'

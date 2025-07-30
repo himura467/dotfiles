@@ -34,7 +34,7 @@ source "$DOTFILES_ROOT/nodenv/path.zsh"
 # Skip Node.js version installation in CI environments
 if [[ "${CI:-}" == 'true' ]]; then
   info 'Skipping Node.js version installation in CI environment'
-  exit 0
+  return 0
 fi
 
 user 'Would you like to install a specific Node.js version? (y/n)'
