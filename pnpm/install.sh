@@ -23,5 +23,6 @@ if ! command -v npm > /dev/null; then
 fi
 
 npm install -g pnpm@latest-10
+nodenv rehash
 
 success 'pnpm installed'
