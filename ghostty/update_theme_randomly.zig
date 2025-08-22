@@ -13,6 +13,7 @@ pub fn main() !void {
 
     const dotfiles_root = blk: {
         var path = try allocator.dupe(u8, exe_path);
+        defer allocator.free(path);
         var i = path.len;
         while (i > 0) {
             i -= 1;
@@ -97,7 +98,9 @@ pub fn main() !void {
     else
         try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Selected from all themes'", .{dotfiles_root});
     defer allocator.free(log_cmd);
-    _ = try executeCommand(allocator, &.{ "sh", "-c", log_cmd });
+    const log_result = try executeCommand(allocator, &.{ "sh", "-c", log_cmd });
+    defer allocator.free(log_result.stdout);
+    defer allocator.free(log_result.stderr);
 
     // Update config file
     const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
@@ -108,7 +111,9 @@ pub fn main() !void {
     // Log success
     const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Theme updated to: {s}'", .{ dotfiles_root, new_theme });
     defer allocator.free(success_cmd);
-    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
+    const success_result = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
+    defer allocator.free(success_result.stdout);
+    defer allocator.free(success_result.stderr);
 }
 
 fn getAvailableThemes(allocator: Allocator) !ArrayList([]const u8) {

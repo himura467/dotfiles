@@ -13,6 +13,7 @@ pub fn main() !void {
 
     const dotfiles_root = blk: {
         var path = try allocator.dupe(u8, exe_path);
+        defer allocator.free(path);
         var i = path.len;
         while (i > 0) {
             i -= 1;
@@ -38,7 +39,9 @@ pub fn main() !void {
         error.ThemeNotFound => {
             const error_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && error 'No theme found in config'", .{dotfiles_root});
             defer allocator.free(error_cmd);
-            _ = try executeCommand(allocator, &.{ "sh", "-c", error_cmd });
+            const error_result = try executeCommand(allocator, &.{ "sh", "-c", error_cmd });
+            defer allocator.free(error_result.stdout);
+            defer allocator.free(error_result.stderr);
             std.process.exit(1);
         },
         else => return err,
@@ -69,7 +72,9 @@ pub fn main() !void {
     if (already_favorite) {
         const info_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Theme \"{s}\" is already in favorites'", .{ dotfiles_root, current_theme });
         defer allocator.free(info_cmd);
-        _ = try executeCommand(allocator, &.{ "sh", "-c", info_cmd });
+        const info_result = try executeCommand(allocator, &.{ "sh", "-c", info_cmd });
+        defer allocator.free(info_result.stdout);
+        defer allocator.free(info_result.stderr);
         return;
     }
 
@@ -99,7 +104,9 @@ pub fn main() !void {
     // Log success
     const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Added \"{s}\" to favorites'", .{ dotfiles_root, current_theme });
     defer allocator.free(success_cmd);
-    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
+    const success_result = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
+    defer allocator.free(success_result.stdout);
+    defer allocator.free(success_result.stderr);
 }
 
 fn getCurrentTheme(allocator: Allocator, config_file: []const u8) ![]const u8 {
