@@ -9,15 +9,41 @@ use Cwd 'abs_path';
 my $DOTFILES_ROOT = abs_path($0);
 $DOTFILES_ROOT =~ s!/ghostty/[^/]+$!!;
 
-system("source $DOTFILES_ROOT/lib/logger.sh && info 'Updating Ghostty theme'");
-
 # Set random seed if provided
 srand($ARGV[0]) if @ARGV;
 
-# Get available themes and select one randomly
+# Get favorites file path
+my $favorites_file = "$DOTFILES_ROOT/ghostty/favorites.txt";
+
+# Get available themes
 my $themes = [ map { s/ \(.*\)$//; $_ } `ghostty +list-themes` ];
 chomp @$themes;
-my $new_theme = $themes->[int(rand(@$themes))];
+
+my $new_theme;
+
+# Use favorites 50% of the time if favorites file exists and has content
+if (-f $favorites_file && rand() < 0.5) {
+    my $favorites = [];
+    open(my $fav_in, '<', $favorites_file) or die "Cannot open $favorites_file: $!";
+    while (my $line = <$fav_in>) {
+        chomp $line;
+        push @$favorites, $line if $line;
+    }
+    close $fav_in;
+    
+    if (@$favorites) {
+        $new_theme = $favorites->[int(rand(@$favorites))];
+        system("source $DOTFILES_ROOT/lib/logger.sh && info 'Selected from favorites'");
+    } else {
+        # Fall back to all themes if favorites is empty
+        $new_theme = $themes->[int(rand(@$themes))];
+        system("source $DOTFILES_ROOT/lib/logger.sh && info 'Selected from all themes'");
+    }
+} else {
+    # Select from all themes
+    $new_theme = $themes->[int(rand(@$themes))];
+    system("source $DOTFILES_ROOT/lib/logger.sh && info 'Selected from all themes'");
+}
 
 # Config file path
 my $config_file = "$DOTFILES_ROOT/ghostty/config";
