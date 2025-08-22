@@ -8,5 +8,5 @@ font-size = 16
 
 mouse-hide-while-typing = true
 
-keybind = super+shift+f=text:~/.dotfiles/ghostty/add_theme_to_favorites.pl\n
+keybind = super+shift+f=text:~/.dotfiles/ghostty/add_theme_to_favorites\n
 keybind = shift+enter=text:\n
