@@ -154,22 +154,30 @@ fn updateConfigFile(allocator: Allocator, config_file: []const u8, new_theme: []
 
     var updated = false;
     var lines = std.mem.splitSequence(u8, content, "\n");
+    var first_line = true;
 
     while (lines.next()) |line| {
+        if (!first_line) {
+            try new_content.append(allocator, '\n');
+        }
+        first_line = false;
+
         if (std.mem.startsWith(u8, std.mem.trim(u8, line, " \t"), "theme")) {
             // Replace existing theme line
-            const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}\n", .{new_theme});
+            const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}", .{new_theme});
             try new_content.appendSlice(allocator, theme_line);
             updated = true;
         } else {
             try new_content.appendSlice(allocator, line);
-            try new_content.append(allocator, '\n');
         }
     }
 
     // Append theme if not found in existing config
     if (!updated) {
-        const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}\n", .{new_theme});
+        if (new_content.items.len > 0) {
+            try new_content.append(allocator, '\n');
+        }
+        const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}", .{new_theme});
         try new_content.appendSlice(allocator, theme_line);
     }
 
