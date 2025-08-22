@@ -3,17 +3,15 @@ const ArrayList = std.ArrayList;
 const Allocator = std.mem.Allocator;
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
 
     // Get dotfiles root path
     const exe_path = try std.fs.selfExePathAlloc(allocator);
-    defer allocator.free(exe_path);
 
     const dotfiles_root = blk: {
         var path = try allocator.dupe(u8, exe_path);
-        defer allocator.free(path);
         var i = path.len;
         while (i > 0) {
             i -= 1;
@@ -26,39 +24,26 @@ pub fn main() !void {
         }
         return error.CouldNotFindDotfilesRoot;
     };
-    defer allocator.free(dotfiles_root);
 
     // Config and favorites file paths
     const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
-    defer allocator.free(config_file);
     const favorites_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/favorites.txt", .{dotfiles_root});
-    defer allocator.free(favorites_file);
 
     // Get current theme from config
     const current_theme = getCurrentTheme(allocator, config_file) catch |err| switch (err) {
         error.ThemeNotFound => {
             const error_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && error 'No theme found in config'", .{dotfiles_root});
-            defer allocator.free(error_cmd);
-            const error_result = try executeCommand(allocator, &.{ "sh", "-c", error_cmd });
-            defer allocator.free(error_result.stdout);
-            defer allocator.free(error_result.stderr);
+            _ = try executeCommand(allocator, &.{ "sh", "-c", error_cmd });
             std.process.exit(1);
         },
         else => return err,
     };
-    defer allocator.free(current_theme);
 
     // Read existing favorites
-    var favorites = getFavorites(allocator, favorites_file) catch |err| switch (err) {
+    const favorites = getFavorites(allocator, favorites_file) catch |err| switch (err) {
         error.FileNotFound => ArrayList([]const u8){},
         else => return err,
     };
-    defer {
-        for (favorites.items) |favorite| {
-            allocator.free(favorite);
-        }
-        favorites.deinit(allocator);
-    }
 
     // Check if already in favorites
     var already_favorite = false;
@@ -71,21 +56,12 @@ pub fn main() !void {
 
     if (already_favorite) {
         const info_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Theme \"{s}\" is already in favorites'", .{ dotfiles_root, current_theme });
-        defer allocator.free(info_cmd);
-        const info_result = try executeCommand(allocator, &.{ "sh", "-c", info_cmd });
-        defer allocator.free(info_result.stdout);
-        defer allocator.free(info_result.stderr);
+        _ = try executeCommand(allocator, &.{ "sh", "-c", info_cmd });
         return;
     }
 
     // Add to favorites
     var new_favorites = ArrayList([]const u8){};
-    defer {
-        for (new_favorites.items) |favorite| {
-            allocator.free(favorite);
-        }
-        new_favorites.deinit(allocator);
-    }
 
     // Copy existing favorites
     for (favorites.items) |favorite| {
@@ -103,10 +79,7 @@ pub fn main() !void {
 
     // Log success
     const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Added \"{s}\" to favorites'", .{ dotfiles_root, current_theme });
-    defer allocator.free(success_cmd);
-    const success_result = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
-    defer allocator.free(success_result.stdout);
-    defer allocator.free(success_result.stderr);
+    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
 }
 
 fn getCurrentTheme(allocator: Allocator, config_file: []const u8) ![]const u8 {
@@ -117,7 +90,6 @@ fn getCurrentTheme(allocator: Allocator, config_file: []const u8) ![]const u8 {
     defer file.close();
 
     const content = try file.readToEndAlloc(allocator, 1024 * 1024);
-    defer allocator.free(content);
 
     var lines = std.mem.splitSequence(u8, content, "\n");
 
@@ -145,7 +117,6 @@ fn getFavorites(allocator: Allocator, favorites_file: []const u8) !ArrayList([]c
     defer file.close();
 
     const content = try file.readToEndAlloc(allocator, 1024 * 1024);
-    defer allocator.free(content);
 
     var favorites = ArrayList([]const u8){};
     var lines = std.mem.splitSequence(u8, content, "\n");
@@ -189,9 +160,7 @@ fn executeCommand(allocator: Allocator, argv: []const []const u8) !CommandResult
     try child.spawn();
 
     var stdout = ArrayList(u8){};
-    defer stdout.deinit(allocator);
     var stderr = ArrayList(u8){};
-    defer stderr.deinit(allocator);
 
     try child.collectOutput(allocator, &stdout, &stderr, 1024 * 1024);
     const term = try child.wait();

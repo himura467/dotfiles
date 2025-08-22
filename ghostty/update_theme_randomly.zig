@@ -3,17 +3,15 @@ const ArrayList = std.ArrayList;
 const Allocator = std.mem.Allocator;
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer _ = gpa.deinit();
-    const allocator = gpa.allocator();
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
 
     // Get dotfiles root path
     const exe_path = try std.fs.selfExePathAlloc(allocator);
-    defer allocator.free(exe_path);
 
     const dotfiles_root = blk: {
         var path = try allocator.dupe(u8, exe_path);
-        defer allocator.free(path);
         var i = path.len;
         while (i > 0) {
             i -= 1;
@@ -26,12 +24,10 @@ pub fn main() !void {
         }
         return error.CouldNotFindDotfilesRoot;
     };
-    defer allocator.free(dotfiles_root);
 
     // Set random seed if provided as command line argument
     var prng = blk: {
         const args = try std.process.argsAlloc(allocator);
-        defer std.process.argsFree(allocator, args);
 
         if (args.len > 1) {
             const seed = std.fmt.parseInt(u64, args[1], 10) catch {
@@ -45,17 +41,10 @@ pub fn main() !void {
     };
 
     // Get available themes from ghostty
-    var themes = try getAvailableThemes(allocator);
-    defer {
-        for (themes.items) |theme| {
-            allocator.free(theme);
-        }
-        themes.deinit(allocator);
-    }
+    const themes = try getAvailableThemes(allocator);
 
     // Get favorites file path
     const favorites_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/favorites.txt", .{dotfiles_root});
-    defer allocator.free(favorites_file);
 
     var new_theme: []const u8 = undefined;
     var selected_from_favorites = false;
@@ -63,16 +52,10 @@ pub fn main() !void {
     // Use favorites 50% of the time if favorites file exists and has content
     if (std.fs.cwd().access(favorites_file, .{})) |_| {
         if (prng.random().float(f32) < 0.5) {
-            var favorites = getFavorites(allocator, favorites_file) catch |err| switch (err) {
+            const favorites = getFavorites(allocator, favorites_file) catch |err| switch (err) {
                 error.FileNotFound => ArrayList([]const u8){},
                 else => return err,
             };
-            defer {
-                for (favorites.items) |favorite| {
-                    allocator.free(favorite);
-                }
-                favorites.deinit(allocator);
-            }
 
             if (favorites.items.len > 0) {
                 const index = prng.random().uintLessThan(usize, favorites.items.len);
@@ -90,36 +73,26 @@ pub fn main() !void {
         const index = prng.random().uintLessThan(usize, themes.items.len);
         new_theme = try allocator.dupe(u8, themes.items[index]);
     }
-    defer allocator.free(new_theme);
 
     // Log selection method
     const log_cmd = if (selected_from_favorites)
         try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Selected from favorites'", .{dotfiles_root})
     else
         try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Selected from all themes'", .{dotfiles_root});
-    defer allocator.free(log_cmd);
-    const log_result = try executeCommand(allocator, &.{ "sh", "-c", log_cmd });
-    defer allocator.free(log_result.stdout);
-    defer allocator.free(log_result.stderr);
+    _ = try executeCommand(allocator, &.{ "sh", "-c", log_cmd });
 
     // Update config file
     const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
-    defer allocator.free(config_file);
 
     try updateConfigFile(allocator, config_file, new_theme);
 
     // Log success
     const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Theme updated to: {s}'", .{ dotfiles_root, new_theme });
-    defer allocator.free(success_cmd);
-    const success_result = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
-    defer allocator.free(success_result.stdout);
-    defer allocator.free(success_result.stderr);
+    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
 }
 
 fn getAvailableThemes(allocator: Allocator) !ArrayList([]const u8) {
     const result = try executeCommand(allocator, &.{ "ghostty", "+list-themes" });
-    defer allocator.free(result.stdout);
-    defer allocator.free(result.stderr);
 
     var themes = ArrayList([]const u8){};
     var lines = std.mem.splitSequence(u8, result.stdout, "\n");
@@ -147,7 +120,6 @@ fn getFavorites(allocator: Allocator, favorites_file: []const u8) !ArrayList([]c
     defer file.close();
 
     const content = try file.readToEndAlloc(allocator, 1024 * 1024);
-    defer allocator.free(content);
 
     var favorites = ArrayList([]const u8){};
     var lines = std.mem.splitSequence(u8, content, "\n");
@@ -169,7 +141,6 @@ fn updateConfigFile(allocator: Allocator, config_file: []const u8, new_theme: []
             const new_file = try std.fs.cwd().createFile(config_file, .{});
             defer new_file.close();
             const content = try std.fmt.allocPrint(allocator, "theme = {s}\n", .{new_theme});
-            defer allocator.free(content);
             try new_file.writeAll(content);
             return;
         },
@@ -178,10 +149,8 @@ fn updateConfigFile(allocator: Allocator, config_file: []const u8, new_theme: []
     defer file.close();
 
     const content = try file.readToEndAlloc(allocator, 1024 * 1024);
-    defer allocator.free(content);
 
     var new_content = ArrayList(u8){};
-    defer new_content.deinit(allocator);
 
     var updated = false;
     var lines = std.mem.splitSequence(u8, content, "\n");
@@ -190,7 +159,6 @@ fn updateConfigFile(allocator: Allocator, config_file: []const u8, new_theme: []
         if (std.mem.startsWith(u8, std.mem.trim(u8, line, " \t"), "theme")) {
             // Replace existing theme line
             const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}\n", .{new_theme});
-            defer allocator.free(theme_line);
             try new_content.appendSlice(allocator, theme_line);
             updated = true;
         } else {
@@ -202,7 +170,6 @@ fn updateConfigFile(allocator: Allocator, config_file: []const u8, new_theme: []
     // Append theme if not found in existing config
     if (!updated) {
         const theme_line = try std.fmt.allocPrint(allocator, "theme = {s}\n", .{new_theme});
-        defer allocator.free(theme_line);
         try new_content.appendSlice(allocator, theme_line);
     }
 
@@ -226,9 +193,7 @@ fn executeCommand(allocator: Allocator, argv: []const []const u8) !CommandResult
     try child.spawn();
 
     var stdout = ArrayList(u8){};
-    defer stdout.deinit(allocator);
     var stderr = ArrayList(u8){};
-    defer stderr.deinit(allocator);
 
     try child.collectOutput(allocator, &stdout, &stderr, 1024 * 1024);
     const term = try child.wait();
