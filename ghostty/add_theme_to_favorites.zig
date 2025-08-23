@@ -32,8 +32,6 @@ pub fn main() !void {
     // Get current theme from config
     const current_theme = getCurrentTheme(allocator, config_file) catch |err| switch (err) {
         error.ThemeNotFound => {
-            const error_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && error 'No theme found in config'", .{dotfiles_root});
-            _ = try executeCommand(allocator, &.{ "sh", "-c", error_cmd });
             std.process.exit(1);
         },
         else => return err,
@@ -55,8 +53,6 @@ pub fn main() !void {
     }
 
     if (already_favorite) {
-        const info_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Theme \"{s}\" is already in favorites'", .{ dotfiles_root, current_theme });
-        _ = try executeCommand(allocator, &.{ "sh", "-c", info_cmd });
         return;
     }
 
@@ -76,10 +72,6 @@ pub fn main() !void {
 
     // Write updated favorites
     try writeFavorites(allocator, favorites_file, new_favorites.items);
-
-    // Log success
-    const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Added \"{s}\" to favorites'", .{ dotfiles_root, current_theme });
-    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
 }
 
 fn getCurrentTheme(allocator: Allocator, config_file: []const u8) ![]const u8 {

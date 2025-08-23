@@ -74,21 +74,10 @@ pub fn main() !void {
         new_theme = try allocator.dupe(u8, themes.items[index]);
     }
 
-    // Log selection method
-    const log_cmd = if (selected_from_favorites)
-        try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Selected from favorites'", .{dotfiles_root})
-    else
-        try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && info 'Selected from all themes'", .{dotfiles_root});
-    _ = try executeCommand(allocator, &.{ "sh", "-c", log_cmd });
-
     // Update config file
     const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
 
     try updateConfigFile(allocator, config_file, new_theme);
-
-    // Log success
-    const success_cmd = try std.fmt.allocPrint(allocator, "source {s}/lib/logger.sh && success 'Theme updated to: {s}'", .{ dotfiles_root, new_theme });
-    _ = try executeCommand(allocator, &.{ "sh", "-c", success_cmd });
 }
 
 fn getAvailableThemes(allocator: Allocator) !ArrayList([]const u8) {
