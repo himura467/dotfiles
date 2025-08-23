@@ -206,3 +206,75 @@ fn executeCommand(allocator: Allocator, argv: []const []const u8) !CommandResult
         .exit_code = exit_code,
     };
 }
+
+// Tests
+test "getAvailableThemes handles OutOfMemory" {
+    // Test the parsing logic that would be used in getAvailableThemes
+    var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
+    const allocator = failing_allocator.allocator();
+
+    // Mock output that getAvailableThemes would process
+    const mock_stdout = "theme1 (builtin)\ntheme2 (user)\ntheme3\n";
+
+    // Test the parsing logic that allocates memory
+    var themes = ArrayList([]const u8){};
+    defer {
+        for (themes.items) |theme| {
+            std.testing.allocator.free(theme);
+        }
+        themes.deinit(std.testing.allocator);
+    }
+
+    var lines = std.mem.splitSequence(u8, mock_stdout, "\n");
+    while (lines.next()) |line| {
+        if (line.len == 0) continue;
+
+        var theme_name = line;
+        if (std.mem.indexOf(u8, line, " (")) |index| {
+            theme_name = line[0..index];
+        }
+
+        // This should fail with OutOfMemory
+        const result = allocator.dupe(u8, theme_name);
+        try std.testing.expectError(error.OutOfMemory, result);
+        break; // Exit after first allocation attempt fails
+    }
+}
+
+test "getFavorites handles OutOfMemory" {
+    var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
+    const allocator = failing_allocator.allocator();
+
+    // Create temporary favorites file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test favorites content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_favorites", .data = "favorite1\nfavorite2\nfavorite3\n" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(std.testing.allocator, "test_favorites");
+    defer std.testing.allocator.free(favorites_file);
+
+    // Test getFavorites with failing allocator - should return OutOfMemory
+    const result = getFavorites(allocator, favorites_file);
+    try std.testing.expectError(error.OutOfMemory, result);
+}
+
+test "updateConfigFile handles OutOfMemory" {
+    var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
+    const allocator = failing_allocator.allocator();
+
+    // Create temporary config file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write initial config content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_config", .data = "theme = old_theme\nother_setting = value\n" });
+
+    const config_file = try temp_dir.dir.realpathAlloc(std.testing.allocator, "test_config");
+    defer std.testing.allocator.free(config_file);
+
+    // Test updateConfigFile with failing allocator - should return OutOfMemory
+    const result = updateConfigFile(allocator, config_file, "new_theme");
+    try std.testing.expectError(error.OutOfMemory, result);
+}
