@@ -24,5 +24,5 @@ unset config_files
 
 # update ghostty theme
 if command -v ghostty > /dev/null; then
-  $HOME/.dotfiles/ghostty/update_theme_randomly.pl
+  $HOME/.dotfiles/ghostty/update_theme_randomly
 fi
