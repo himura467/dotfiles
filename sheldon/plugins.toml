@@ -19,6 +19,10 @@ shell = "zsh"
 # [plugins.base16]
 # github = "chriskempson/base16-shell"
 
+[plugins.zsh-abbr]
+github = "olets/zsh-abbr"
+use = ["{{ name }}.zsh"]
+
 [plugins.zsh-defer]
 github = "romkatv/zsh-defer"
 
