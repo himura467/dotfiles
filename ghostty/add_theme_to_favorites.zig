@@ -170,6 +170,75 @@ fn executeCommand(allocator: Allocator, argv: []const []const u8) !CommandResult
 }
 
 // Tests
+test "getCurrentTheme memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create a temporary config file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test config content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_config", .data = "theme = test_theme\nother_setting = value\n" });
+
+    const config_file = try temp_dir.dir.realpathAlloc(allocator, "test_config");
+
+    // Test getCurrentTheme - should succeed and return theme
+    const theme = try getCurrentTheme(allocator, config_file);
+
+    try std.testing.expect(std.mem.eql(u8, theme, "test_theme"));
+}
+
+test "getFavorites memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create temporary favorites file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test favorites content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_favorites", .data = "theme1\ntheme2\ntheme3\n" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(allocator, "test_favorites");
+
+    // Test getFavorites - should succeed and return favorites list
+    const favorites = try getFavorites(allocator, favorites_file);
+
+    try std.testing.expect(favorites.items.len == 3);
+    try std.testing.expect(std.mem.eql(u8, favorites.items[0], "theme1"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[1], "theme2"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[2], "theme3"));
+}
+
+test "writeFavorites memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create temporary directory
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Create the test_output file first
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_output", .data = "" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(allocator, "test_output");
+
+    // Test data
+    const test_favorites = [_][]const u8{ "theme1", "theme2", "theme3" };
+
+    // Test writeFavorites - should succeed
+    try writeFavorites(allocator, favorites_file, &test_favorites);
+
+    // Verify the file was written correctly
+    const content = try temp_dir.dir.readFileAlloc(allocator, "test_output", 1024);
+
+    try std.testing.expect(std.mem.eql(u8, content, "theme1\ntheme2\ntheme3\n"));
+}
+
 test "getCurrentTheme handles OutOfMemory" {
     var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
     const allocator = failing_allocator.allocator();

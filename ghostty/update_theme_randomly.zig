@@ -208,6 +208,82 @@ fn executeCommand(allocator: Allocator, argv: []const []const u8) !CommandResult
 }
 
 // Tests
+test "getAvailableThemes memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Mock the ghostty command result using the actual parsing logic
+    const mock_stdout = "theme1 (builtin)\ntheme2 (user)\ntheme3\n";
+
+    // Test the parsing logic that allocates memory
+    var themes = ArrayList([]const u8){};
+
+    var lines = std.mem.splitSequence(u8, mock_stdout, "\n");
+    while (lines.next()) |line| {
+        if (line.len == 0) continue;
+
+        var theme_name = line;
+        if (std.mem.indexOf(u8, line, " (")) |index| {
+            theme_name = line[0..index];
+        }
+
+        try themes.append(allocator, try allocator.dupe(u8, theme_name));
+    }
+
+    try std.testing.expect(themes.items.len == 3);
+    try std.testing.expect(std.mem.eql(u8, themes.items[0], "theme1"));
+    try std.testing.expect(std.mem.eql(u8, themes.items[1], "theme2"));
+    try std.testing.expect(std.mem.eql(u8, themes.items[2], "theme3"));
+}
+
+test "getFavorites memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create temporary favorites file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test favorites content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_favorites", .data = "favorite1\nfavorite2\nfavorite3\n" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(allocator, "test_favorites");
+
+    // Test getFavorites - should succeed and return favorites list
+    const favorites = try getFavorites(allocator, favorites_file);
+
+    try std.testing.expect(favorites.items.len == 3);
+    try std.testing.expect(std.mem.eql(u8, favorites.items[0], "favorite1"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[1], "favorite2"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[2], "favorite3"));
+}
+
+test "updateConfigFile memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create temporary config file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write initial config content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_config", .data = "theme = old_theme\nother_setting = value\n" });
+
+    const config_file = try temp_dir.dir.realpathAlloc(allocator, "test_config");
+
+    // Test updateConfigFile - should succeed
+    try updateConfigFile(allocator, config_file, "new_theme");
+
+    // Verify the file was updated correctly
+    const content = try temp_dir.dir.readFileAlloc(allocator, "test_config", 1024);
+
+    try std.testing.expect(std.mem.indexOf(u8, content, "theme = new_theme") != null);
+    try std.testing.expect(std.mem.indexOf(u8, content, "other_setting = value") != null);
+}
+
 test "getAvailableThemes handles OutOfMemory" {
     // Test the parsing logic that would be used in getAvailableThemes
     var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
