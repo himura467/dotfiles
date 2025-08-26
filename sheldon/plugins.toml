@@ -19,6 +19,9 @@ shell = "zsh"
 # [plugins.base16]
 # github = "chriskempson/base16-shell"
 
+[plugins.starship]
+inline = 'eval "$(starship init zsh)"'
+
 [plugins.zsh-abbr]
 github = "olets/zsh-abbr"
 use = ["{{ name }}.zsh"]
