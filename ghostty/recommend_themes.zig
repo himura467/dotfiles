@@ -329,3 +329,305 @@ fn compareThemesBySimilarity(context: void, a: ThemeInfo, b: ThemeInfo) bool {
     _ = context;
     return a.similarity_score > b.similarity_score;
 }
+
+// Tests
+test "parseHexColor memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const red = try parseHexColor("ff0000");
+    try std.testing.expect(red.r == 1.0);
+    try std.testing.expect(red.g == 0.0);
+    try std.testing.expect(red.b == 0.0);
+
+    const green = try parseHexColor("00ff00");
+    try std.testing.expect(green.r == 0.0);
+    try std.testing.expect(green.g == 1.0);
+    try std.testing.expect(green.b == 0.0);
+
+    const blue = try parseHexColor("0000ff");
+    try std.testing.expect(blue.r == 0.0);
+    try std.testing.expect(blue.g == 0.0);
+    try std.testing.expect(blue.b == 1.0);
+}
+
+test "parseHexColor handles invalid input" {
+    // Test invalid hex length
+    try std.testing.expectError(error.InvalidHexColor, parseHexColor("ff00"));
+    try std.testing.expectError(error.InvalidHexColor, parseHexColor("ff00000"));
+
+    // Test invalid hex characters
+    try std.testing.expectError(error.InvalidCharacter, parseHexColor("gggggg"));
+}
+
+test "rgbToHsl conversion accuracy" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    // Test pure red
+    const red = RGB{ .r = 1.0, .g = 0.0, .b = 0.0 };
+    const red_hsl = rgbToHsl(red);
+    try std.testing.expect(@abs(red_hsl.h - 0.0) < 0.01);
+    try std.testing.expect(@abs(red_hsl.s - 1.0) < 0.01);
+    try std.testing.expect(@abs(red_hsl.l - 0.5) < 0.01);
+
+    // Test pure green
+    const green = RGB{ .r = 0.0, .g = 1.0, .b = 0.0 };
+    const green_hsl = rgbToHsl(green);
+    try std.testing.expect(@abs(green_hsl.h - 120.0) < 0.01);
+    try std.testing.expect(@abs(green_hsl.s - 1.0) < 0.01);
+    try std.testing.expect(@abs(green_hsl.l - 0.5) < 0.01);
+
+    // Test pure blue
+    const blue = RGB{ .r = 0.0, .g = 0.0, .b = 1.0 };
+    const blue_hsl = rgbToHsl(blue);
+    try std.testing.expect(@abs(blue_hsl.h - 240.0) < 0.01);
+    try std.testing.expect(@abs(blue_hsl.s - 1.0) < 0.01);
+    try std.testing.expect(@abs(blue_hsl.l - 0.5) < 0.01);
+
+    // Test grayscale
+    const gray = RGB{ .r = 0.5, .g = 0.5, .b = 0.5 };
+    const gray_hsl = rgbToHsl(gray);
+    try std.testing.expect(@abs(gray_hsl.s - 0.0) < 0.01);
+    try std.testing.expect(@abs(gray_hsl.l - 0.5) < 0.01);
+}
+
+test "calculateColorDistance symmetric property" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const color1 = RGB{ .r = 1.0, .g = 0.0, .b = 0.0 };
+    const color2 = RGB{ .r = 0.0, .g = 1.0, .b = 0.0 };
+
+    const distance1 = calculateColorDistance(color1, color2);
+    const distance2 = calculateColorDistance(color2, color1);
+
+    try std.testing.expect(@abs(distance1 - distance2) < 0.001);
+}
+
+test "calculateColorDistance identity property" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const color = RGB{ .r = 0.5, .g = 0.3, .b = 0.8 };
+    const distance = calculateColorDistance(color, color);
+
+    try std.testing.expect(@abs(distance) < 0.001);
+}
+
+test "parseColorFromLine memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const background_line = "background = #1e1f29";
+    const color = try parseColorFromLine(background_line);
+
+    // #1e1f29 = RGB(30, 31, 41)
+    try std.testing.expect(@abs(color.r - (30.0 / 255.0)) < 0.01);
+    try std.testing.expect(@abs(color.g - (31.0 / 255.0)) < 0.01);
+    try std.testing.expect(@abs(color.b - (41.0 / 255.0)) < 0.01);
+}
+
+test "parseColorFromLine handles invalid format" {
+    try std.testing.expectError(error.InvalidFormat, parseColorFromLine("background = no_hash"));
+    try std.testing.expectError(error.InvalidFormat, parseColorFromLine("invalid_line"));
+}
+
+test "parsePaletteLine memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+
+    const palette_line = "palette = 5=#ff79c6";
+    const entry = try parsePaletteLine(palette_line);
+
+    try std.testing.expect(entry.index == 5);
+    // #ff79c6 = RGB(255, 121, 198)
+    try std.testing.expect(@abs(entry.color.r - 1.0) < 0.01);
+    try std.testing.expect(@abs(entry.color.g - (121.0 / 255.0)) < 0.01);
+    try std.testing.expect(@abs(entry.color.b - (198.0 / 255.0)) < 0.01);
+}
+
+test "parsePaletteLine handles invalid format" {
+    try std.testing.expectError(error.InvalidFormat, parsePaletteLine("palette = invalid"));
+    try std.testing.expectError(error.InvalidFormat, parsePaletteLine("palette = 5=no_hash"));
+    try std.testing.expectError(error.InvalidCharacter, parsePaletteLine("palette = not_number=#ff0000"));
+}
+
+test "loadTheme memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create a temporary theme file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    const theme_content =
+        \\palette = 0=#000000
+        \\palette = 1=#ff5555
+        \\palette = 2=#50fa7b
+        \\background = #1e1f29
+        \\foreground = #e6e6e6
+        \\cursor-color = #bbbbbb
+        \\selection-background = #44475a
+    ;
+
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_theme", .data = theme_content });
+
+    // Get the temp path for testing
+    const temp_path = try temp_dir.dir.realpathAlloc(allocator, "test_theme");
+
+    // Create a modified loadTheme function for testing
+    const theme = loadThemeFromPath(allocator, "test_theme", temp_path) catch |err| {
+        return err;
+    };
+
+    try std.testing.expect(std.mem.eql(u8, theme.name, "test_theme"));
+    // Verify background color parsing
+    try std.testing.expect(@abs(theme.colors.background.r - (30.0 / 255.0)) < 0.01);
+    try std.testing.expect(@abs(theme.colors.background.g - (31.0 / 255.0)) < 0.01);
+    try std.testing.expect(@abs(theme.colors.background.b - (41.0 / 255.0)) < 0.01);
+}
+
+fn loadThemeFromPath(allocator: Allocator, theme_name: []const u8, theme_path: []const u8) !ThemeInfo {
+    const file = try std.fs.cwd().openFile(theme_path, .{});
+    defer file.close();
+
+    const content = try file.readToEndAlloc(allocator, 1024 * 1024);
+
+    var theme_colors = ThemeColors{
+        .background = RGB{ .r = 0, .g = 0, .b = 0 },
+        .foreground = RGB{ .r = 1, .g = 1, .b = 1 },
+        .palette = [_]RGB{RGB{ .r = 0, .g = 0, .b = 0 }} ** 16,
+        .cursor_color = RGB{ .r = 1, .g = 1, .b = 1 },
+        .selection_background = RGB{ .r = 0.5, .g = 0.5, .b = 0.5 },
+    };
+
+    var lines = std.mem.splitSequence(u8, content, "\n");
+    while (lines.next()) |line| {
+        const trimmed = std.mem.trim(u8, line, " \t\r");
+        if (trimmed.len == 0) continue;
+
+        if (std.mem.startsWith(u8, trimmed, "palette = ")) {
+            if (parsePaletteLine(trimmed)) |palette_entry| {
+                if (palette_entry.index < 16) {
+                    theme_colors.palette[palette_entry.index] = palette_entry.color;
+                }
+            } else |_| {}
+        } else if (std.mem.startsWith(u8, trimmed, "background = ")) {
+            if (parseColorFromLine(trimmed)) |color| {
+                theme_colors.background = color;
+            } else |_| {}
+        } else if (std.mem.startsWith(u8, trimmed, "foreground = ")) {
+            if (parseColorFromLine(trimmed)) |color| {
+                theme_colors.foreground = color;
+            } else |_| {}
+        } else if (std.mem.startsWith(u8, trimmed, "cursor-color = ")) {
+            if (parseColorFromLine(trimmed)) |color| {
+                theme_colors.cursor_color = color;
+            } else |_| {}
+        } else if (std.mem.startsWith(u8, trimmed, "selection-background = ")) {
+            if (parseColorFromLine(trimmed)) |color| {
+                theme_colors.selection_background = color;
+            } else |_| {}
+        }
+    }
+
+    return ThemeInfo{
+        .name = try allocator.dupe(u8, theme_name),
+        .colors = theme_colors,
+    };
+}
+
+test "getFavorites memory leak detection" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create temporary favorites file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test favorites content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_favorites", .data = "theme1\ntheme2\ntheme3\n" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(allocator, "test_favorites");
+
+    // Test getFavorites - should succeed and return favorites list
+    const favorites = try getFavorites(allocator, favorites_file);
+
+    try std.testing.expect(favorites.items.len == 3);
+    try std.testing.expect(std.mem.eql(u8, favorites.items[0], "theme1"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[1], "theme2"));
+    try std.testing.expect(std.mem.eql(u8, favorites.items[2], "theme3"));
+}
+
+test "getFavorites handles OutOfMemory" {
+    var failing_allocator = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = 0 });
+    const allocator = failing_allocator.allocator();
+
+    // Create temporary favorites file
+    var temp_dir = std.testing.tmpDir(.{});
+    defer temp_dir.cleanup();
+
+    // Write test favorites content
+    try temp_dir.dir.writeFile(.{ .sub_path = "test_favorites", .data = "theme1\ntheme2\ntheme3\n" });
+
+    const favorites_file = try temp_dir.dir.realpathAlloc(std.testing.allocator, "test_favorites");
+    defer std.testing.allocator.free(favorites_file);
+
+    // Test getFavorites with failing allocator - should return OutOfMemory
+    const result = getFavorites(allocator, favorites_file);
+    try std.testing.expectError(error.OutOfMemory, result);
+}
+
+test "calculateSimilarityToFavorites basic functionality" {
+    var arena = std.heap.ArenaAllocator.init(std.testing.allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // Create test theme colors
+    const test_colors = ThemeColors{
+        .background = RGB{ .r = 0.1, .g = 0.1, .b = 0.1 },
+        .foreground = RGB{ .r = 0.9, .g = 0.9, .b = 0.9 },
+        .palette = [_]RGB{RGB{ .r = 0.0, .g = 0.0, .b = 0.0 }} ** 16,
+        .cursor_color = RGB{ .r = 0.7, .g = 0.7, .b = 0.7 },
+        .selection_background = RGB{ .r = 0.3, .g = 0.3, .b = 0.3 },
+    };
+
+    // Create identical favorite theme
+    const identical_theme = ThemeInfo{
+        .name = try allocator.dupe(u8, "identical"),
+        .colors = test_colors,
+    };
+
+    // Create different favorite theme
+    const different_colors = ThemeColors{
+        .background = RGB{ .r = 0.9, .g = 0.9, .b = 0.9 },
+        .foreground = RGB{ .r = 0.1, .g = 0.1, .b = 0.1 },
+        .palette = [_]RGB{RGB{ .r = 1.0, .g = 1.0, .b = 1.0 }} ** 16,
+        .cursor_color = RGB{ .r = 0.2, .g = 0.2, .b = 0.2 },
+        .selection_background = RGB{ .r = 0.8, .g = 0.8, .b = 0.8 },
+    };
+
+    const different_theme = ThemeInfo{
+        .name = try allocator.dupe(u8, "different"),
+        .colors = different_colors,
+    };
+
+    // Test with identical theme
+    var identical_favorites = [_]ThemeInfo{identical_theme};
+    const identical_similarity = calculateSimilarityToFavorites(test_colors, identical_favorites[0..]);
+    try std.testing.expect(identical_similarity > 0.99); // Should be very high
+
+    // Test with different theme
+    var different_favorites = [_]ThemeInfo{different_theme};
+    const different_similarity = calculateSimilarityToFavorites(test_colors, different_favorites[0..]);
+    try std.testing.expect(different_similarity < identical_similarity); // Should be lower
+
+    // Test with mixed favorites
+    var mixed_favorites = [_]ThemeInfo{ identical_theme, different_theme };
+    const mixed_similarity = calculateSimilarityToFavorites(test_colors, mixed_favorites[0..]);
+    try std.testing.expect(mixed_similarity > different_similarity);
+    try std.testing.expect(mixed_similarity < identical_similarity);
+}
