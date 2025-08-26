@@ -206,11 +206,16 @@ const PaletteEntry = struct {
 
 fn parsePaletteLine(line: []const u8) !PaletteEntry {
     // Format: "palette = INDEX=#RRGGBB"
-    const eq_pos = std.mem.indexOf(u8, line, "=") orelse return error.InvalidFormat;
-    const hash_pos = std.mem.indexOf(u8, line[eq_pos..], "#") orelse return error.InvalidFormat;
+    const first_eq_pos = std.mem.indexOf(u8, line, "=") orelse return error.InvalidFormat;
+    const hash_pos = std.mem.indexOf(u8, line, "#") orelse return error.InvalidFormat;
 
-    const index_str = std.mem.trim(u8, line[eq_pos + 1 .. eq_pos + hash_pos], " \t");
-    const color_str = line[eq_pos + hash_pos + 1 ..];
+    const middle_part = std.mem.trim(u8, line[first_eq_pos + 1 .. hash_pos], " \t");
+    // Remove trailing = if present
+    const index_str = if (std.mem.endsWith(u8, middle_part, "="))
+        middle_part[0 .. middle_part.len - 1]
+    else
+        middle_part;
+    const color_str = line[hash_pos + 1 ..];
 
     const index = try std.fmt.parseInt(usize, index_str, 10);
     const color = try parseHexColor(color_str);
