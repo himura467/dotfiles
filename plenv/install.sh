@@ -38,20 +38,16 @@ if [[ "$install_perl" =~ ^[Yy]$ ]]; then
   info_list "$available_versions"
   read -r -p '> ' perl_version
   
-  if echo "$available_versions" | grep -q "^$perl_version$"; then
-    info "Installing Perl $perl_version"
-    plenv install "$perl_version"
-    
-    user "Would you like to set Perl $perl_version as the global default? (y/n)"
-    read -r -p '> ' set_global
-    
-    if [[ "$set_global" =~ ^[Yy]$ ]]; then
-      plenv global "$perl_version"
-      success "Perl $perl_version set as global default"
-    fi
-    
-    success "Perl $perl_version installed"
-  else
-    fail 'Invalid Perl version. Please choose from the available versions listed above.'
+  info "Installing Perl $perl_version"
+  plenv install "$perl_version"
+  
+  user "Would you like to set Perl $perl_version as the global default? (y/n)"
+  read -r -p '> ' set_global
+  
+  if [[ "$set_global" =~ ^[Yy]$ ]]; then
+    plenv global "$perl_version"
+    success "Perl $perl_version set as global default"
   fi
+  
+  success "Perl $perl_version installed"
 fi

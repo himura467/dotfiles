@@ -46,20 +46,16 @@ if [[ "$install_terraform" =~ ^[Yy]$ ]]; then
   info_list "$available_versions"
   read -r -p '> ' terraform_version
   
-  if echo "$available_versions" | grep -q "^$terraform_version$"; then
-    info "Installing Terraform $terraform_version"
-    tfenv install "$terraform_version"
-    
-    user "Would you like to set Terraform $terraform_version as the global default? (y/n)"
-    read -r -p '> ' set_global
-    
-    if [[ "$set_global" =~ ^[Yy]$ ]]; then
-      tfenv use "$terraform_version"
-      success "Terraform $terraform_version set as global default"
-    fi
-    
-    success "Terraform $terraform_version installed"
-  else
-    fail 'Invalid Terraform version. Please choose from the available versions listed above.'
+  info "Installing Terraform $terraform_version"
+  tfenv install "$terraform_version"
+  
+  user "Would you like to set Terraform $terraform_version as the global default? (y/n)"
+  read -r -p '> ' set_global
+  
+  if [[ "$set_global" =~ ^[Yy]$ ]]; then
+    tfenv use "$terraform_version"
+    success "Terraform $terraform_version set as global default"
   fi
+  
+  success "Terraform $terraform_version installed"
 fi

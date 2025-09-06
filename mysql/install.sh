@@ -36,13 +36,9 @@ info 'Available versions:'
 info_list "$available_versions"
 read -r -p '> ' mysql_version
 
-if echo "$available_versions" | grep -q "^$mysql_version$"; then
-  info "Installing MySQL@$mysql_version"
-  brew install mysql@"$mysql_version"
-  
-  # Store the selected version for path.zsh
-  echo "$mysql_version" > "$(dirname "${BASH_SOURCE[0]}")/.mysql-version"
-  success "MySQL@$mysql_version installed"
-else
-  fail 'Invalid MySQL version. Please choose from the available versions listed above.'
-fi
+info "Installing MySQL@$mysql_version"
+brew install mysql@"$mysql_version"
+
+# Store the selected version for path.zsh
+echo "$mysql_version" > "$(dirname "${BASH_SOURCE[0]}")/.mysql-version"
+success "MySQL@$mysql_version installed"

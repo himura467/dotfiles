@@ -46,12 +46,8 @@ if [[ "$install_python" =~ ^[Yy]$ ]]; then
   info_list "$available_versions"
   read -r -p '> ' python_version
   
-  if echo "$available_versions" | grep -q "^$python_version$"; then
-    info "Installing Python $python_version"
-    uv python install "$python_version"
-    
-    success "Python $python_version installed"
-  else
-    fail 'Invalid Python version. Please choose from the available versions listed above.'
-  fi
+  info "Installing Python $python_version"
+  uv python install "$python_version"
+  
+  success "Python $python_version installed"
 fi

@@ -48,20 +48,16 @@ if [[ "$install_node" =~ ^[Yy]$ ]]; then
   info_list "$available_versions"
   read -r -p '> ' node_version
   
-  if echo "$available_versions" | grep -q "^$node_version$"; then
-    info "Installing Node.js $node_version"
-    nodenv install "$node_version"
-    
-    user "Would you like to set Node.js $node_version as the global default? (y/n)"
-    read -r -p '> ' set_global
-    
-    if [[ "$set_global" =~ ^[Yy]$ ]]; then
-      nodenv global "$node_version"
-      success "Node.js $node_version set as global default"
-    fi
-    
-    success "Node.js $node_version installed"
-  else
-    fail 'Invalid Node.js version. Please choose from the available versions listed above.'
+  info "Installing Node.js $node_version"
+  nodenv install "$node_version"
+  
+  user "Would you like to set Node.js $node_version as the global default? (y/n)"
+  read -r -p '> ' set_global
+  
+  if [[ "$set_global" =~ ^[Yy]$ ]]; then
+    nodenv global "$node_version"
+    success "Node.js $node_version set as global default"
   fi
+  
+  success "Node.js $node_version installed"
 fi

@@ -48,20 +48,16 @@ if [[ "$install_python" =~ ^[Yy]$ ]]; then
   info_list "$available_versions"
   read -r -p '> ' python_version
   
-  if echo "$available_versions" | grep -q "^$python_version$"; then
-    info "Installing Python $python_version"
-    pyenv install "$python_version"
-    
-    user "Would you like to set Python $python_version as the global default? (y/n)"
-    read -r -p '> ' set_global
-    
-    if [[ "$set_global" =~ ^[Yy]$ ]]; then
-      pyenv global "$python_version"
-      success "Python $python_version set as global default"
-    fi
-    
-    success "Python $python_version installed"
-  else
-    fail 'Invalid Python version. Please choose from the available versions listed above.'
+  info "Installing Python $python_version"
+  pyenv install "$python_version"
+  
+  user "Would you like to set Python $python_version as the global default? (y/n)"
+  read -r -p '> ' set_global
+  
+  if [[ "$set_global" =~ ^[Yy]$ ]]; then
+    pyenv global "$python_version"
+    success "Python $python_version set as global default"
   fi
+  
+  success "Python $python_version installed"
 fi
