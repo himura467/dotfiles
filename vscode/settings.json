@@ -1,5 +1,6 @@
 {
   "workbench.startupEditor": "none",
+  "window.newWindowProfile": "Default",
   "update.showReleaseNotes": false,
   "editor.minimap.enabled": false,
   "[json]": {
