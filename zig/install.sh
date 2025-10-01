@@ -54,7 +54,7 @@ if ! command -v zig > /dev/null; then
   fi
 
   info 'Installing build dependencies (CMake, LLVM, LLD)'
-  brew install cmake llvm@$llvm_version lld@$llvm_version
+  brew install cmake "llvm@$llvm_version" "lld@$llvm_version"
 
   # Build from source
   info 'Building Zig from source'
