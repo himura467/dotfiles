@@ -60,7 +60,7 @@ if ! command -v zig > /dev/null; then
   info 'Building Zig from source'
   mkdir build
   cd build
-  cmake .. -DZIG_STATIC_LLVM=ON -DZIG_STATIC_ZSTD=ON -DCMAKE_PREFIX_PATH="$(brew --prefix llvm@$llvm_version);$(brew --prefix lld@$llvm_version);$(brew --prefix zstd)"
+  cmake .. -DZIG_STATIC_LLVM=ON -DZIG_STATIC_ZSTD=ON -DCMAKE_PREFIX_PATH="$(brew --prefix "llvm@$llvm_version");$(brew --prefix "lld@$llvm_version");$(brew --prefix zstd)"
   make install
 
   success 'Zig installed'
