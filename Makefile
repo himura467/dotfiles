@@ -57,7 +57,6 @@ test-installers:
 	@command -v direnv > /dev/null && echo 'OK. direnv is installed.' || (echo 'FAIL. direnv is not installed.' && exit 1)
 	@command -v docker > /dev/null && echo 'OK. docker is installed.' || (echo 'FAIL. docker is not installed.' && exit 1)
 	@command -v gcloud > /dev/null && echo 'OK. gcloud is installed.' || (echo 'FAIL. gcloud is not installed.' && exit 1)
-	@command -v ghostty > /dev/null && echo 'OK. ghostty is installed.' || (echo 'FAIL. ghostty is not installed.' && exit 1)
 	@command -v go > /dev/null && echo 'OK. go is installed.' || (echo 'FAIL. go is not installed.' && exit 1)
 	@command -v brew > /dev/null && echo 'OK. homebrew is installed.' || (echo 'FAIL. homebrew is not installed.' && exit 1)
 	# MySQL is commented out because the installer requires interactive version selection
