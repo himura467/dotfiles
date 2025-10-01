@@ -57,7 +57,6 @@ test-installers:
 	@command -v direnv > /dev/null && echo 'OK. direnv is installed.' || (echo 'FAIL. direnv is not installed.' && exit 1)
 	@command -v docker > /dev/null && echo 'OK. docker is installed.' || (echo 'FAIL. docker is not installed.' && exit 1)
 	@command -v gcloud > /dev/null && echo 'OK. gcloud is installed.' || (echo 'FAIL. gcloud is not installed.' && exit 1)
-	@command -v ghostty > /dev/null && echo 'OK. ghostty is installed.' || (echo 'FAIL. ghostty is not installed.' && exit 1)
 	@command -v go > /dev/null && echo 'OK. go is installed.' || (echo 'FAIL. go is not installed.' && exit 1)
 	@command -v brew > /dev/null && echo 'OK. homebrew is installed.' || (echo 'FAIL. homebrew is not installed.' && exit 1)
 	# MySQL is commented out because the installer requires interactive version selection
@@ -77,7 +76,9 @@ test-installers:
 	@command -v sheldon > /dev/null && echo 'OK. sheldon is installed.' || (echo 'FAIL. sheldon is not installed.' && exit 1)
 	@command -v tfenv > /dev/null && echo 'OK. tfenv is installed.' || (echo 'FAIL. tfenv is not installed.' && exit 1)
 	@command -v uv > /dev/null && echo 'OK. uv is installed.' || (echo 'FAIL. uv is not installed.' && exit 1)
-	@command -v zig > /dev/null && echo 'OK. zig is installed.' || (echo 'FAIL. zig is not installed.' && exit 1)
+	# Zig is commented out because the installer requires interactive version selection
+	# which cannot be handled by the `yes` command in CI environments
+	# @command -v zig > /dev/null && echo 'OK. zig is installed.' || (echo 'FAIL. zig is not installed.' && exit 1)
 	# Applications
 	@ls /Applications/Docker.app > /dev/null 2>&1 && echo 'OK. Docker app is installed.' || (echo 'FAIL. Docker app is not installed.' && exit 1)
 	@ls /Applications/Ghostty.app > /dev/null 2>&1 && echo 'OK. Ghostty app is installed.' || (echo 'FAIL. Ghostty app is not installed.' && exit 1)
