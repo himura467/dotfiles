@@ -35,6 +35,12 @@ if ! command -v zig > /dev/null; then
     git fetch --tags
   fi
 
+  # Skip Zig version installation in CI environments
+  if [[ "${CI:-}" == 'true' ]]; then
+    info 'Skipping Zig version build in CI environment'
+    return 0
+  fi
+
   # Get desired version tag
   user 'Enter Zig version tag to build (e.g., 0.15.1, or leave empty for latest):'
   read -r -p '> ' version_tag
