@@ -73,7 +73,7 @@ if ! command -v zig > /dev/null; then
   # Move extracted contents to install directory
   ZIG_EXTRACTED=$(find "$TEMP_DIR" -name 'zig-*' -type d | head -1)
   mkdir -p "$ZIG_INSTALL_DIR"
-  rm -rf "$ZIG_INSTALL_DIR"/*
+  rm -rf "${ZIG_INSTALL_DIR:?}"/*
   mv "$ZIG_EXTRACTED"/* "$ZIG_INSTALL_DIR/"
 
   # Cleanup
