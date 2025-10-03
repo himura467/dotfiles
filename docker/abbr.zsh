@@ -1,2 +1,2 @@
 abbr -q d='docker'
-abbr -q dc='docker compose'
+abbr -q -f dc='docker compose'
