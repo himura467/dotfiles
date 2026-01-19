@@ -11,28 +11,7 @@ source "$DOTFILES_ROOT/lib/symlink.sh"
 
 info 'Installing Claude Code'
 
-# Skip Claude Code installation in CI environments (requires interactive approval)
-if [[ "${CI:-}" == 'true' ]]; then
-  info 'Skipping Claude Code installation in CI environment'
-  return 0
-fi
-
-if ! command -v pnpm > /dev/null; then
-  user 'pnpm not found. Would you like to install pnpm first? (y/n)'
-  read -r -p '> ' install_pnpm
-  
-  if [[ "$install_pnpm" =~ ^[Yy]$ ]]; then
-    source "$DOTFILES_ROOT/pnpm/install.sh"
-    source "$DOTFILES_ROOT/pnpm/path.zsh"
-  else
-    fail 'pnpm is required to install Claude Code.'
-  fi
-fi
-
-pnpm add -g @anthropic-ai/claude-code
-
-info 'Approving builds for Claude Code'
-pnpm approve-builds -g
+curl -fsSL https://claude.ai/install.sh | bash
 
 mkdir -p "$HOME/.claude"
 overwrite_all=false backup_all=false skip_all=false
