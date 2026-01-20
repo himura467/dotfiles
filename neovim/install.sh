@@ -6,7 +6,6 @@ set -euo pipefail
 
 DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")"/..; pwd)
 source "$DOTFILES_ROOT/lib/logger.sh"
-source "$DOTFILES_ROOT/lib/symlink.sh"
 
 info 'Installing Neovim'
 if ! command -v nvim > /dev/null; then
@@ -25,8 +24,12 @@ if ! command -v nvim > /dev/null; then
 else
   success 'Neovim is already installed'
 fi
+NVIM_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME}/.config/nvim"
 info 'Configuring Neovim'
-mkdir -p "${XDG_CONFIG_HOME:-$HOME}/.config"
-overwrite_all=false backup_all=false skip_all=false
-link_file "$DOTFILES_ROOT/neovim/nvim" "${XDG_CONFIG_HOME:-$HOME}/.config/nvim"
-success 'Neovim configured'
+if [ ! -d "$NVIM_CONFIG_DIR" ]; then
+  mkdir -p "$(dirname "$NVIM_CONFIG_DIR")"
+  git clone https://github.com/himura467/nvim.git "$NVIM_CONFIG_DIR"
+  success 'Neovim configured'
+else
+  success 'Neovim is already configured'
+fi
