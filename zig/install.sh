@@ -9,21 +9,8 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 
 info 'Installing Zig'
 ZIG_INSTALL_DIR="$HOME/.zig"
-# Ensure jq is installed
-if ! command -v jq > /dev/null; then
-  if ! command -v brew > /dev/null; then
-    user 'Homebrew not found. Would you like to install Homebrew first? (y/n)'
-    read -r -p '> ' install_brew
-    if [[ "$install_brew" =~ ^[Yy]$ ]]; then
-      source "$DOTFILES_ROOT/homebrew/install.sh"
-      source "$DOTFILES_ROOT/homebrew/path.zsh"
-    else
-      fail 'Homebrew is required to install jq.'
-    fi
-  fi
-  info 'Installing jq'
-  brew install jq
-fi
+# Install jq
+source "$DOTFILES_ROOT/jq/install.sh"
 # Get desired version
 user 'Enter Zig version to install (e.g., 0.15.1, or leave empty for latest master):'
 read -r -p '> ' version_tag
