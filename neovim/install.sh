@@ -27,6 +27,7 @@ fi
 NVIM_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME}/.config/nvim"
 info 'Configuring Neovim'
 if [ ! -d "$NVIM_CONFIG_DIR" ]; then
+  mkdir -p "$(dirname "$NVIM_CONFIG_DIR")"
   git clone https://github.com/himura467/nvim.git "$NVIM_CONFIG_DIR"
   success 'Neovim configured'
 else
