@@ -29,12 +29,6 @@ else
   success 'uv is already installed'
 fi
 
-# Skip Python version installation in CI environments
-if [[ "${CI:-}" == 'true' ]]; then
-  info 'Skipping Python version installation in CI environment'
-  return 0
-fi
-
 user 'Would you like to install a specific Python version? (y/n)'
 read -r -p '> ' install_python
 
