@@ -22,5 +22,5 @@ fi
 brew install sheldon
 mkdir -p "$HOME/.config/sheldon"
 overwrite_all=false backup_all=false skip_all=false
-link_file "$DOTFILES_ROOT/sheldon/plugins.toml" "$HOME/.config/sheldon/plugins.toml"
+link_file "$DOTFILES_ROOT/sheldon/plugins.toml.symlink" "$HOME/.config/sheldon/plugins.toml"
 success 'sheldon installed'
