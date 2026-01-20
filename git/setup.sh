@@ -17,13 +17,13 @@ if ! [[ -f "$DOTFILES_ROOT/git/gitconfig.local.symlink" ]]; then
   if [[ -n "${GIT_AUTHORNAME:-}" ]]; then
     git_authorname="$GIT_AUTHORNAME"
   else
-    user 'What is your github author name?'
+    user 'What is your GitHub author name?'
     read -r -p '> ' -e git_authorname
   fi
   if [[ -n "${GIT_AUTHOREMAIL:-}" ]]; then
     git_authoremail="$GIT_AUTHOREMAIL"
   else
-    user 'What is your github author email?'
+    user 'What is your GitHub author email?'
     read -r -p '> ' -e git_authoremail
   fi
   sed -e "s/AUTHORNAME/$git_authorname/g" -e "s/AUTHOREMAIL/$git_authoremail/g" -e "s/GIT_CREDENTIAL_HELPER/$git_credential/g" "$DOTFILES_ROOT/git/gitconfig.local.symlink.example" > "$DOTFILES_ROOT/git/gitconfig.local.symlink"
