@@ -24,7 +24,7 @@ if ! command -v tfenv > /dev/null; then
 else
   success 'tfenv is already installed'
 fi
-user "Would you like to install a specific Terraform version? (y/n)"
+user 'Would you like to install a specific Terraform version? (y/n)'
 read -r -p '> ' install_terraform
 if [[ "$install_terraform" =~ ^[Yy]$ ]]; then
   available_versions=$(tfenv list-remote | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -10)
