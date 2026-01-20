@@ -10,10 +10,14 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 
 info 'Installing Homebrew'
 
-if [[ "$(uname -s)" == 'Darwin' ]]; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+if ! command -v brew > /dev/null; then
+  if [[ "$(uname -s)" == 'Darwin' ]]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  success 'Homebrew installed'
+    success 'Homebrew installed'
+  else
+    fail 'Linux is not supported. Only available on macOS.'
+  fi
 else
-  fail 'Linux is not supported. Only available on macOS.'
+  success 'Homebrew is already installed'
 fi
