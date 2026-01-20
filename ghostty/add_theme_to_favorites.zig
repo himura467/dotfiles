@@ -26,7 +26,7 @@ pub fn main() !void {
     };
 
     // Config and favorites file paths
-    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
+    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config.symlink", .{dotfiles_root});
     const favorites_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/favorites.txt", .{dotfiles_root});
 
     // Get current theme from config

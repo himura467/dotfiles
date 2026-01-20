@@ -75,7 +75,7 @@ pub fn main() !void {
     }
 
     // Update config file
-    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config", .{dotfiles_root});
+    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config.symlink", .{dotfiles_root});
 
     try updateConfigFile(allocator, config_file, new_theme);
 }
