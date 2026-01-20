@@ -30,12 +30,6 @@ if ! command -v jq > /dev/null; then
   brew install jq
 fi
 
-# Skip Zig installation in CI environments
-if [[ "${CI:-}" == 'true' ]]; then
-  info 'Skipping Zig installation in CI environment'
-  return 0
-fi
-
 # Get desired version
 user 'Enter Zig version to install (e.g., 0.15.1, or leave empty for latest master):'
 read -r -p '> ' version_tag
