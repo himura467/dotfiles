@@ -22,5 +22,5 @@ fi
 brew install --cask visual-studio-code
 mkdir -p "$HOME/Library/Application Support/Code/User"
 overwrite_all=false backup_all=false skip_all=false
-link_file "$DOTFILES_ROOT/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+link_file "$DOTFILES_ROOT/vscode/settings.json.symlink" "$HOME/Library/Application Support/Code/User/settings.json"
 success 'Visual Studio Code installed'
