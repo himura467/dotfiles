@@ -21,7 +21,7 @@ run_all_setups () {
     [[ -f "$dir/setup.sh" ]] && setup_dirs+=("$dir")
   done < <(find -H "$DOTFILES_ROOT" -maxdepth 1 -type d -not -path '*.git*' -print0 | sort -z)
   for setup_dir in "${setup_dirs[@]}"; do
-    local setup_name
+    local setup_name run_setup
     setup_name=$(basename "$setup_dir")
     user "Would you like to run $setup_name setup? (y/n)"
     read -r -p '> ' run_setup
@@ -42,7 +42,7 @@ run_all_installers () {
     [[ -f "$dir/install.sh" ]] && installer_dirs+=("$dir")
   done < <(find -H "$DOTFILES_ROOT" -maxdepth 1 -type d -not -path '*.git*' -print0 | sort -z)
   for installer_dir in "${installer_dirs[@]}"; do
-    local installer_name
+    local installer_name run_installer
     installer_name=$(basename "$installer_dir")
     user "Would you like to run $installer_name installer? (y/n)"
     read -r -p '> ' run_installer
