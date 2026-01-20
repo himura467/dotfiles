@@ -12,5 +12,5 @@ info 'Installing Claude Code'
 curl -fsSL https://claude.ai/install.sh | bash
 mkdir -p "$HOME/.claude"
 overwrite_all=false backup_all=false skip_all=false
-link_file "$DOTFILES_ROOT/claude-code/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
+link_file "$DOTFILES_ROOT/claude-code/CLAUDE.md.symlink" "$HOME/.claude/CLAUDE.md"
 success 'Claude Code installed'
