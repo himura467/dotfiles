@@ -24,17 +24,3 @@ if ! command -v go > /dev/null; then
 else
   success 'Go is already installed'
 fi
-if ! command -v wire > /dev/null; then
-  user 'Do you want to install Wire?'
-  read -r -p '[Y/n] ' yn
-  case "$yn" in
-    [Nn]* )
-      info 'Skipping Wire installation'
-      ;;
-    * )
-      info 'Installing Wire'
-      go install github.com/google/wire/cmd/wire@latest
-      success 'Wire installed successfully'
-      ;;
-  esac
-fi
