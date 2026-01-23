@@ -4,7 +4,7 @@ if command -v ghq > /dev/null && command -v fzf > /dev/null; then
     local repo=$(ghq list | fzf --reverse --query "$LBUFFER")
     if [[ -n "$repo" ]]; then
       repo=$(ghq list --full-path --exact "$repo")
-      BUFFER="cd ${repo}"
+      BUFFER="cd ${(q)repo}"
       zle accept-line
     fi
     zle clear-screen
