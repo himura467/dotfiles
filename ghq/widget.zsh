@@ -7,7 +7,7 @@ if command -v ghq > /dev/null && command -v fzf > /dev/null; then
       BUFFER="cd ${(q)repo}"
       zle accept-line
     fi
-    zle clear-screen
+    zle reset-prompt
   }
   zle -N fzf-ghq-widget
   bindkey '\eg' fzf-ghq-widget
