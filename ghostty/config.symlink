@@ -14,3 +14,5 @@ keybind = super+shift+f=text:~/.dotfiles/ghostty/add_theme_to_favorites\n
 keybind = shift+enter=text:\n
 # Hyper+C sends Alt+C for fzf cd widget
 keybind = shift+ctrl+alt+super+c=text:\x1bc
+# Hyper+G sends Alt+G for fzf ghq widget
+keybind = shift+ctrl+alt+super+g=text:\x1bg
