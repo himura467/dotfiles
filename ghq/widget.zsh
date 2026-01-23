@@ -3,7 +3,7 @@ if command -v ghq > /dev/null && command -v fzf > /dev/null; then
   fzf-ghq-widget() {
     local repo=$(ghq list | fzf --reverse --query "$LBUFFER")
     if [[ -n "$repo" ]]; then
-      repo=$(ghq list --full-path --exact $repo)
+      repo=$(ghq list --full-path --exact "$repo")
       BUFFER="cd ${repo}"
       zle accept-line
     fi
