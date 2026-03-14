@@ -1,8 +1,6 @@
 auto-update-channel = tip
 
 theme = YOUR_GHOSTTY_THEME_HERE
-fullscreen = true
-macos-non-native-fullscreen = true
 background-opacity = 0.9
 
 font-feature = -dlig
