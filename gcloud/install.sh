@@ -17,6 +17,7 @@ if ! command -v gcloud > /dev/null; then
       source "$DOTFILES_ROOT/homebrew/path.zsh"
     else
       fail 'Homebrew is required to install Google Cloud SDK.'
+      exit 1
     fi
   fi
   brew install --cask google-cloud-sdk

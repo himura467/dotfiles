@@ -15,4 +15,5 @@ if command -v brew > /dev/null; then
   success 'Homebrew upgraded'
 else
   fail 'Homebrew not found. Homebrew is required to upgrade Homebrew.'
+  exit 1
 fi

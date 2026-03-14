@@ -23,12 +23,14 @@ if [[ -n "$version_tag" ]]; then
   DOWNLOAD_URL=$(echo "$INDEX_JSON" | jq -r --arg version "$version_tag" '.[$version]."aarch64-macos".tarball // empty')
   if [[ -z "$DOWNLOAD_URL" ]]; then
     fail "Version $version_tag not found or aarch64-macos tarball not available"
+    exit 1
   fi
 else
   info 'Using latest master build'
   DOWNLOAD_URL=$(echo "$INDEX_JSON" | jq -r '.master."aarch64-macos".tarball // empty')
   if [[ -z "$DOWNLOAD_URL" ]]; then
     fail 'Could not find aarch64-macos tarball for master'
+    exit 1
   fi
 fi
 # Download and extract

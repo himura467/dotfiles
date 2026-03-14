@@ -17,6 +17,7 @@ if ! command -v brew > /dev/null; then
     source "$DOTFILES_ROOT/homebrew/path.zsh"
   else
     fail 'Homebrew is required to install Visual Studio Code.'
+    exit 1
   fi
 fi
 brew install --cask visual-studio-code
