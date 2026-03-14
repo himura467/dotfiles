@@ -17,6 +17,7 @@ if ! command -v op > /dev/null; then
       source "$DOTFILES_ROOT/homebrew/path.zsh"
     else
       fail 'Homebrew is required to install 1Password CLI.'
+      exit 1
     fi
   fi
   brew install 1password-cli

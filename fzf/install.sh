@@ -17,6 +17,7 @@ if ! command -v fzf > /dev/null; then
       source "$DOTFILES_ROOT/homebrew/path.zsh"
     else
       fail 'Homebrew is required to install fzf.'
+      exit 1
     fi
   fi
   brew install fzf

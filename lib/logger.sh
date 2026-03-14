@@ -26,6 +26,5 @@ warn () {
 
 fail () {
   printf "\r  [\033[0;31mFAIL\033[0m] %s\n" "$1"
-  echo ''
-  exit
+  return 1
 }

@@ -17,6 +17,7 @@ if ! command -v rg > /dev/null; then
       source "$DOTFILES_ROOT/homebrew/path.zsh"
     else
       fail 'Homebrew is required to install ripgrep.'
+      exit 1
     fi
   fi
   brew install ripgrep

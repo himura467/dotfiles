@@ -17,6 +17,7 @@ if ! command -v tfenv > /dev/null; then
       source "$DOTFILES_ROOT/homebrew/path.zsh"
     else
       fail 'Homebrew is required to install tfenv.'
+      exit 1
     fi
   fi
   brew install tfenv

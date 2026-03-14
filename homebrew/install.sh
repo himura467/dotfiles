@@ -14,6 +14,7 @@ if ! command -v brew > /dev/null; then
     success 'Homebrew installed'
   else
     fail 'Linux is not supported. Only available on macOS.'
+    exit 1
   fi
 else
   success 'Homebrew is already installed'

@@ -16,6 +16,7 @@ if ! command -v npm > /dev/null; then
     source "$DOTFILES_ROOT/nodenv/path.zsh"
   else
     fail 'npm is required to install pnpm.'
+    exit 1
   fi
 fi
 npm install -g pnpm@latest-10
