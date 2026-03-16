@@ -12,13 +12,12 @@ if ! command -v npm > /dev/null; then
   user 'npm not found. Would you like to install Node.js/npm first? (y/n)'
   read -r -p '> ' install_node
   if [[ "$install_node" =~ ^[Yy]$ ]]; then
-    source "$DOTFILES_ROOT/nodenv/install.sh"
-    source "$DOTFILES_ROOT/nodenv/path.zsh"
+    source "$DOTFILES_ROOT/vite-plus/install.sh"
+    source "$DOTFILES_ROOT/vite-plus/path.zsh"
   else
     fail 'npm is required to install pnpm.'
     exit 1
   fi
 fi
 npm install -g pnpm@latest-10
-nodenv rehash
 success 'pnpm installed'
