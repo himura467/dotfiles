@@ -1,20 +1,22 @@
 const std = @import("std");
 
 pub fn getCurrentTheme(allocator: std.mem.Allocator, config_file: []const u8) ![]const u8 {
-    const content = std.fs.cwd().readFileAlloc(allocator, config_file, 1024 * 1024) catch |err| switch (err) {
+    const file = std.fs.cwd().openFile(config_file, .{}) catch |err| switch (err) {
         error.FileNotFound => return error.GhosttyConfigNotFound,
         else => return err,
     };
+    defer file.close();
 
-    var lines = std.mem.splitScalar(u8, content, '\n');
+    var buf: [4096]u8 = undefined;
+    var r = file.reader(&buf);
 
-    while (lines.next()) |line| {
+    while (try r.interface.takeDelimiter('\n')) |line| {
         const trimmed = std.mem.trim(u8, line, " \t\r");
         if (std.mem.startsWith(u8, trimmed, "theme")) {
             if (std.mem.indexOf(u8, trimmed, "=")) |eq_index| {
                 const theme_part = std.mem.trim(u8, trimmed[eq_index + 1 ..], " \t");
                 if (theme_part.len > 0) {
-                    return theme_part;
+                    return try allocator.dupe(u8, theme_part);
                 }
             }
         }
@@ -28,9 +30,14 @@ pub fn getAvailableThemes(allocator: std.mem.Allocator) !std.ArrayList([]const u
         .allocator = allocator,
         .argv = &.{ "ghostty", "+list-themes" },
     });
+    defer allocator.free(result.stdout);
+    defer allocator.free(result.stderr);
 
     var themes = std.ArrayList([]const u8){};
-    errdefer themes.deinit(allocator);
+    errdefer {
+        for (themes.items) |item| allocator.free(item);
+        themes.deinit(allocator);
+    }
 
     var lines = std.mem.splitScalar(u8, result.stdout, '\n');
 
@@ -42,7 +49,7 @@ pub fn getAvailableThemes(allocator: std.mem.Allocator) !std.ArrayList([]const u
         else
             line;
 
-        try themes.append(allocator, theme_name);
+        try themes.append(allocator, try allocator.dupe(u8, theme_name));
     }
 
     return themes;

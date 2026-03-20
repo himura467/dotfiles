@@ -1,22 +1,24 @@
 const std = @import("std");
 
 pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_theme: []const u8) !void {
-    const content_or_null: ?[]const u8 = std.fs.cwd().readFileAlloc(allocator, config_file, 1024 * 1024) catch |err| switch (err) {
-        error.FileNotFound => null,
-        else => return err,
-    };
-    defer if (content_or_null) |content| allocator.free(content);
-
     var aw = std.Io.Writer.Allocating.init(allocator);
     defer aw.deinit();
 
     var updated = false;
 
-    if (content_or_null) |content| {
-        var lines = std.mem.splitScalar(u8, content, '\n');
+    const file_or_null = std.fs.cwd().openFile(config_file, .{}) catch |err| switch (err) {
+        error.FileNotFound => null,
+        else => return err,
+    };
+
+    if (file_or_null) |file| {
+        defer file.close();
+
+        var buf: [4096]u8 = undefined;
+        var r = file.reader(&buf);
         var first_line = true;
 
-        while (lines.next()) |line| {
+        while (try r.interface.takeDelimiter('\n')) |line| {
             if (!first_line) try aw.writer.writeByte('\n');
             first_line = false;
 
