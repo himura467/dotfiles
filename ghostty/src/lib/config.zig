@@ -5,6 +5,7 @@ pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_th
         error.FileNotFound => null,
         else => return err,
     };
+    defer if (content_or_null) |content| allocator.free(content);
 
     var aw = std.Io.Writer.Allocating.init(allocator);
     defer aw.deinit();
