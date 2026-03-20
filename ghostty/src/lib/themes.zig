@@ -6,8 +6,8 @@ pub fn getAvailableThemes(allocator: std.mem.Allocator) !std.ArrayList([]const u
         .argv = &.{ "ghostty", "+list-themes" },
     });
 
-    var themes = std.ArrayList([]const u8).init(allocator);
-    errdefer themes.deinit();
+    var themes = std.ArrayList([]const u8){};
+    errdefer themes.deinit(allocator);
 
     var lines = std.mem.splitScalar(u8, result.stdout, '\n');
 
@@ -19,7 +19,7 @@ pub fn getAvailableThemes(allocator: std.mem.Allocator) !std.ArrayList([]const u
         else
             line;
 
-        try themes.append(theme_name);
+        try themes.append(allocator, theme_name);
     }
 
     return themes;

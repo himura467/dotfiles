@@ -6,9 +6,9 @@ pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_th
         else => return err,
     };
 
-    var new_content = std.ArrayList(u8).init(allocator);
-    errdefer new_content.deinit();
-    const writer = new_content.writer();
+    var new_content = std.ArrayList(u8){};
+    errdefer new_content.deinit(allocator);
+    const writer = new_content.writer(allocator);
 
     var updated = false;
 
