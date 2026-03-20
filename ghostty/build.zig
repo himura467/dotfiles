@@ -12,7 +12,6 @@ pub fn build(b: *std.Build) void {
 
     const executables = [_]struct { name: []const u8, src: []const u8 }{
         .{ .name = "add_theme_to_favorites", .src = "src/bin/add_theme_to_favorites.zig" },
-        .{ .name = "recommend_themes", .src = "src/bin/recommend_themes.zig" },
         .{ .name = "update_theme", .src = "src/bin/update_theme.zig" },
     };
 
