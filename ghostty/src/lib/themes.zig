@@ -9,12 +9,11 @@ pub fn getCurrentTheme(allocator: std.mem.Allocator, dir: std.fs.Dir, config_fil
 
     while (try r.interface.takeDelimiter('\n')) |line| {
         const trimmed = std.mem.trim(u8, line, " \t\r");
-        if (std.mem.startsWith(u8, trimmed, "theme")) {
-            if (std.mem.indexOf(u8, trimmed, "=")) |eq_index| {
-                const theme_part = std.mem.trim(u8, trimmed[eq_index + 1 ..], " \t");
-                if (theme_part.len > 0) {
-                    return try allocator.dupe(u8, theme_part);
-                }
+        const eq_or_null = std.mem.indexOfScalar(u8, trimmed, '=');
+        if (eq_or_null) |eq| {
+            if (std.mem.eql(u8, std.mem.trimRight(u8, trimmed[0..eq], " \t"), "theme")) {
+                const value = std.mem.trim(u8, trimmed[eq + 1 ..], " \t");
+                if (value.len > 0) return try allocator.dupe(u8, value);
             }
         }
     }

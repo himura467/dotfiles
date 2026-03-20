@@ -22,12 +22,16 @@ pub fn updateTheme(allocator: std.mem.Allocator, dir: std.fs.Dir, config_file: [
             if (!first_line) try aw.writer.writeByte('\n');
             first_line = false;
 
-            if (std.mem.startsWith(u8, std.mem.trim(u8, line, " \t\r"), "theme")) {
-                try aw.writer.print("theme = {s}", .{new_theme});
-                updated = true;
-            } else {
-                try aw.writer.writeAll(line);
+            const trimmed = std.mem.trim(u8, line, " \t\r");
+            const eq_or_null = std.mem.indexOfScalar(u8, trimmed, '=');
+            if (eq_or_null) |eq| {
+                if (std.mem.eql(u8, std.mem.trimRight(u8, trimmed[0..eq], " \t"), "theme")) {
+                    try aw.writer.print("theme = {s}", .{new_theme});
+                    updated = true;
+                    continue;
+                }
             }
+            try aw.writer.writeAll(line);
         }
     }
 
