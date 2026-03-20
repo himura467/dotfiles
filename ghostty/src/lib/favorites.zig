@@ -20,3 +20,17 @@ pub fn getFavorites(allocator: std.mem.Allocator, favorites_file: []const u8) !s
 
     return favorites;
 }
+
+pub fn setFavorites(favorites_file: []const u8, favorites: []const []const u8) !void {
+    const file = try std.fs.cwd().createFile(favorites_file, .{});
+    defer file.close();
+
+    var buf: [4096]u8 = undefined;
+    var w = file.writer(&buf);
+
+    for (favorites) |favorite| {
+        try w.interface.print("{s}\n", .{favorite});
+    }
+
+    try w.interface.flush();
+}
