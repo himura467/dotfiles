@@ -34,6 +34,8 @@ pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_th
         try aw.writer.print("theme = {s}", .{new_theme});
     }
 
+    try aw.writer.writeByte('\n');
+
     const file = try std.fs.cwd().createFile(config_file, .{});
     defer file.close();
     try file.writeAll(aw.written());
