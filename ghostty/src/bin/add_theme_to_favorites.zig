@@ -16,13 +16,16 @@ pub fn main() !void {
     defer ghostty_dir.close();
 
     const current_theme = lib.getCurrentTheme(allocator, ghostty_dir, "config.symlink") catch |err| switch (err) {
-        error.GhosttyConfigNotFound, error.ThemeNotFound => {
+        error.FileNotFound, error.ThemeNotFound => {
             std.process.exit(1);
         },
         else => return err,
     };
 
-    var favorites = try lib.getFavorites(allocator, ghostty_dir, "favorites.txt");
+    var favorites = lib.getFavorites(allocator, ghostty_dir, "favorites.txt") catch |err| switch (err) {
+        error.FileNotFound => std.ArrayList([]const u8){},
+        else => return err,
+    };
 
     for (favorites.items) |theme| {
         if (std.mem.eql(u8, theme, current_theme)) {

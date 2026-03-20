@@ -1,10 +1,7 @@
 const std = @import("std");
 
 pub fn getCurrentTheme(allocator: std.mem.Allocator, dir: std.fs.Dir, config_file: []const u8) ![]const u8 {
-    const file = dir.openFile(config_file, .{}) catch |err| switch (err) {
-        error.FileNotFound => return error.GhosttyConfigNotFound,
-        else => return err,
-    };
+    const file = try dir.openFile(config_file, .{});
     defer file.close();
 
     var buf: [4096]u8 = undefined;

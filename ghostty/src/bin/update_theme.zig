@@ -24,7 +24,10 @@ pub fn main() !void {
         }
     };
 
-    const favorites = try lib.getFavorites(allocator, ghostty_dir, "favorites.txt");
+    const favorites = lib.getFavorites(allocator, ghostty_dir, "favorites.txt") catch |err| switch (err) {
+        error.FileNotFound => std.ArrayList([]const u8){},
+        else => return err,
+    };
     const themes = try lib.getAvailableThemes(allocator);
 
     var new_theme: []const u8 = undefined;
