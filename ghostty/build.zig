@@ -27,4 +27,16 @@ pub fn build(b: *std.Build) void {
         });
         b.installArtifact(exe);
     }
+
+    const test_lib = b.addTest(.{
+        .name = "lib",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/lib/main.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+    });
+
+    const test_step = b.step("test", "Run tests");
+    test_step.dependOn(&b.addRunArtifact(test_lib).step);
 }

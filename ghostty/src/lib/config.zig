@@ -42,3 +42,48 @@ pub fn updateTheme(allocator: std.mem.Allocator, dir: std.fs.Dir, config_file: [
     defer file.close();
     try file.writeAll(aw.written());
 }
+
+test "updateTheme: creates config file when none exists" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    try updateTheme(std.testing.allocator, tmp.dir, "config.symlink", "Test Theme");
+    const content = try tmp.dir.readFileAlloc(std.testing.allocator, "config.symlink", 1024);
+    defer std.testing.allocator.free(content);
+    try std.testing.expectEqualStrings("theme = Test Theme\n", content);
+}
+
+test "updateTheme: replaces theme in existing config" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    {
+        const f = try tmp.dir.createFile("config.symlink", .{});
+        defer f.close();
+        try f.writeAll("font-size = 16\ntheme = Old Theme\n");
+    }
+    try updateTheme(std.testing.allocator, tmp.dir, "config.symlink", "New Theme");
+    const content = try tmp.dir.readFileAlloc(std.testing.allocator, "config.symlink", 1024);
+    defer std.testing.allocator.free(content);
+    try std.testing.expectEqualStrings("font-size = 16\ntheme = New Theme\n", content);
+}
+
+test "updateTheme: OOM at every allocation point" {
+    var tmp = std.testing.tmpDir(.{});
+    defer tmp.cleanup();
+
+    {
+        const f = try tmp.dir.createFile("config.symlink", .{});
+        defer f.close();
+        try f.writeAll("theme = Theme A\n");
+    }
+    var fail_index: usize = 0;
+    while (true) : (fail_index += 1) {
+        var fa = std.testing.FailingAllocator.init(std.testing.allocator, .{ .fail_index = fail_index });
+        updateTheme(fa.allocator(), tmp.dir, "config.symlink", "Theme B") catch |err| switch (err) {
+            error.OutOfMemory => continue,
+            else => return err,
+        };
+        break;
+    }
+}
