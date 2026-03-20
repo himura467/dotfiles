@@ -10,19 +10,19 @@ pub fn main() !void {
     defer arena.deinit();
     const allocator = arena.allocator();
 
-    var path_buf: [std.fs.max_path_bytes]u8 = undefined;
-    const dotfiles_root = try lib.findDotfilesRoot(&path_buf);
+    var dotfiles_dir = try lib.findDotfilesRoot();
+    defer dotfiles_dir.close();
+    var ghostty_dir = try dotfiles_dir.openDir("ghostty", .{});
+    defer ghostty_dir.close();
 
-    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config.symlink", .{dotfiles_root});
-    const current_theme = lib.getCurrentTheme(allocator, config_file) catch |err| switch (err) {
+    const current_theme = lib.getCurrentTheme(allocator, ghostty_dir, "config.symlink") catch |err| switch (err) {
         error.GhosttyConfigNotFound, error.ThemeNotFound => {
             std.process.exit(1);
         },
         else => return err,
     };
 
-    const favorites_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/favorites.txt", .{dotfiles_root});
-    var favorites = try lib.getFavorites(allocator, favorites_file);
+    var favorites = try lib.getFavorites(allocator, ghostty_dir, "favorites.txt");
 
     for (favorites.items) |theme| {
         if (std.mem.eql(u8, theme, current_theme)) {
@@ -34,5 +34,5 @@ pub fn main() !void {
 
     std.mem.sort([]const u8, favorites.items, {}, stringLessThan);
 
-    try lib.setFavorites(favorites_file, favorites.items);
+    try lib.setFavorites(ghostty_dir, "favorites.txt", favorites.items);
 }

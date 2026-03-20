@@ -6,8 +6,10 @@ pub fn main() !void {
     defer arena.deinit();
     const allocator = arena.allocator();
 
-    var path_buf: [std.fs.max_path_bytes]u8 = undefined;
-    const dotfiles_root = try lib.findDotfilesRoot(&path_buf);
+    var dotfiles_dir = try lib.findDotfilesRoot();
+    defer dotfiles_dir.close();
+    var ghostty_dir = try dotfiles_dir.openDir("ghostty", .{});
+    defer ghostty_dir.close();
 
     var prng = blk: {
         const args = try std.process.argsAlloc(allocator);
@@ -22,9 +24,7 @@ pub fn main() !void {
         }
     };
 
-    const favorites_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/favorites.txt", .{dotfiles_root});
-    const favorites = try lib.getFavorites(allocator, favorites_file);
-
+    const favorites = try lib.getFavorites(allocator, ghostty_dir, "favorites.txt");
     const themes = try lib.getAvailableThemes(allocator);
 
     var new_theme: []const u8 = undefined;
@@ -37,6 +37,5 @@ pub fn main() !void {
         new_theme = themes.items[index];
     }
 
-    const config_file = try std.fmt.allocPrint(allocator, "{s}/ghostty/config.symlink", .{dotfiles_root});
-    try lib.updateTheme(allocator, config_file, new_theme);
+    try lib.updateTheme(allocator, ghostty_dir, "config.symlink", new_theme);
 }

@@ -1,10 +1,11 @@
 const std = @import("std");
 
-pub fn findDotfilesRoot(buf: *[std.fs.max_path_bytes]u8) ![]const u8 {
-    var current: []const u8 = try std.fs.selfExePath(buf);
+pub fn findDotfilesRoot() !std.fs.Dir {
+    var buf: [std.fs.max_path_bytes]u8 = undefined;
+    var current: []const u8 = try std.fs.selfExePath(&buf);
     while (std.fs.path.dirname(current)) |parent| {
         if (std.mem.eql(u8, std.fs.path.basename(current), "ghostty")) {
-            return parent;
+            return try std.fs.openDirAbsolute(parent, .{});
         }
         current = parent;
     }

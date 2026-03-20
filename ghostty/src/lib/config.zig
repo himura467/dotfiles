@@ -1,12 +1,12 @@
 const std = @import("std");
 
-pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_theme: []const u8) !void {
+pub fn updateTheme(allocator: std.mem.Allocator, dir: std.fs.Dir, config_file: []const u8, new_theme: []const u8) !void {
     var aw = std.Io.Writer.Allocating.init(allocator);
     defer aw.deinit();
 
     var updated = false;
 
-    const file_or_null = std.fs.cwd().openFile(config_file, .{}) catch |err| switch (err) {
+    const file_or_null = dir.openFile(config_file, .{}) catch |err| switch (err) {
         error.FileNotFound => null,
         else => return err,
     };
@@ -38,7 +38,7 @@ pub fn updateTheme(allocator: std.mem.Allocator, config_file: []const u8, new_th
 
     try aw.writer.writeByte('\n');
 
-    const file = try std.fs.cwd().createFile(config_file, .{});
+    const file = try dir.createFile(config_file, .{});
     defer file.close();
     try file.writeAll(aw.written());
 }

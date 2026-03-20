@@ -1,7 +1,7 @@
 const std = @import("std");
 
-pub fn getFavorites(allocator: std.mem.Allocator, favorites_file: []const u8) !std.ArrayList([]const u8) {
-    const file = std.fs.cwd().openFile(favorites_file, .{}) catch |err| switch (err) {
+pub fn getFavorites(allocator: std.mem.Allocator, dir: std.fs.Dir, favorites_file: []const u8) !std.ArrayList([]const u8) {
+    const file = dir.openFile(favorites_file, .{}) catch |err| switch (err) {
         error.FileNotFound => return std.ArrayList([]const u8){},
         else => return err,
     };
@@ -26,8 +26,8 @@ pub fn getFavorites(allocator: std.mem.Allocator, favorites_file: []const u8) !s
     return favorites;
 }
 
-pub fn setFavorites(favorites_file: []const u8, favorites: []const []const u8) !void {
-    const file = try std.fs.cwd().createFile(favorites_file, .{});
+pub fn setFavorites(dir: std.fs.Dir, favorites_file: []const u8, favorites: []const []const u8) !void {
+    const file = try dir.createFile(favorites_file, .{});
     defer file.close();
 
     var buf: [4096]u8 = undefined;
