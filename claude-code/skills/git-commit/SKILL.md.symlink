@@ -6,7 +6,7 @@ description: Stage and commit changes using Conventional Commits, creating a new
 Run the following steps:
 
 1. Run these bash commands in parallel:
-  - `git status` to see all untracked files (never use -uall)
+  - `git status` to see staged, unstaged, and untracked changes
   - `git diff` to see unstaged changes
   - `git diff --cached` to see staged changes
   - `git log --oneline -5` to understand the repo's commit message style
