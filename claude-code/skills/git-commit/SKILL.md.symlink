@@ -1,0 +1,36 @@
+---
+name: git-commit
+description: Stage and commit changes using Conventional Commits, creating a new branch first if on a protected branch
+---
+
+Run the following steps:
+
+1. Run these bash commands in parallel:
+  - `git status` to see all untracked files (never use -uall)
+  - `git diff` to see unstaged changes
+  - `git diff --cached` to see staged changes
+  - `git log --oneline -5` to understand the repo's commit message style
+  - `git branch --show-current` to get the current branch name
+
+2. If the current branch is `main`, `master`, `develop`, or `devel`:
+  - Propose a branch name and ask the user to confirm or provide their own; use `-` as the delimiter — never `/`
+  - Create and switch to the new branch before committing
+
+3. Analyze all changes and draft a commit message following [Conventional Commits](https://www.conventionalcommits.org/):
+  - Format: `<type>[optional scope]: <description>`
+  - Type is mandatory; common types: `fix`, `feat`, `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`
+  - Add `!` after the type/scope or a `BREAKING CHANGE:` footer for breaking changes
+  - Do not commit files that likely contain secrets (.env, credentials, etc.) — warn the user if asked
+
+4. Run the following sequentially:
+  - Stage the relevant files (`git add <files>` — prefer specific files over `git add -A`)
+  - After staging, create the commit using a HEREDOC to pass the message:
+
+```bash
+git commit -m "$(cat <<'EOF'
+<commit message here>
+EOF
+)"
+```
+
+If the commit fails due to a pre-commit hook, fix the underlying issue and create a NEW commit — never amend unless the user explicitly asks.
