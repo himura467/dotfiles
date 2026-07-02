@@ -20,8 +20,9 @@ if ! command -v rustup > /dev/null; then
       exit 1
     fi
   fi
-  brew install rustup-init
-  rustup-init -y
+  brew install rustup
+  source "$DOTFILES_ROOT/rust/path.zsh"
+  rustup default stable
   success 'Rust installed'
 else
   success 'Rust is already installed'
