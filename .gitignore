@@ -1,3 +1,4 @@
 git/gitconfig.local.symlink
 mysql/.mysql-version
+psql/.psql-version
 ghostty/favorites.txt
