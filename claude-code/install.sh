@@ -17,7 +17,6 @@ else
 fi
 mkdir -p "$HOME/.claude"
 overwrite_all=false backup_all=false skip_all=false
-link_file "$DOTFILES_ROOT/claude-code/CLAUDE.md.symlink" "$HOME/.claude/CLAUDE.md"
 for skill_dir in "$DOTFILES_ROOT/claude-code/skills/"*/; do
   [[ -d "$skill_dir" ]] || continue
   skill_name=$(basename "$skill_dir")
