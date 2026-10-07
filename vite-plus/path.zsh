@@ -1,2 +1,2 @@
 # Vite+ bin (https://viteplus.dev)
-[[ -f "$HOME/.vite-plus/env" ]] && . "$HOME/.vite-plus/env"
+[[ -f "$HOME/.config/vite-plus/env" ]] && . "$HOME/.config/vite-plus/env"

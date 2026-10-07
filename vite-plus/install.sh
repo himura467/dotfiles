@@ -9,7 +9,7 @@ source "$DOTFILES_ROOT/lib/logger.sh"
 
 info 'Installing Vite+'
 if ! command -v vp > /dev/null; then
-  curl -fsSL https://vite.plus | bash
+  curl -fsSL https://vite.plus | VP_SELF_SETUP_NO_MODIFY_PATH=1 bash
   success 'Vite+ installed'
 else
   success 'Vite+ is already installed'
