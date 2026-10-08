@@ -20,6 +20,7 @@ Run the following steps:
   - Format: `<type>[optional scope]: <description>`
   - Type is mandatory; common types: `fix`, `feat`, `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`
   - Add `!` after the type/scope or a `BREAKING CHANGE:` footer for breaking changes
+  - Do not hard-wrap the body; write each paragraph or bullet on a single line
   - Do not commit files that likely contain secrets (.env, credentials, etc.) — warn the user if asked
 
 4. Ask the user whether to add a `Co-Authored-By` trailer to the commit message (default: no).
