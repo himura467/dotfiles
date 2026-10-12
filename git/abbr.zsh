@@ -4,6 +4,8 @@ abbr -q gaa='git add --all'
 abbr -q gap='git add --patch'
 abbr -q gb='git branch'
 abbr -q gbd='git branch --delete --force'
+# Delete local branches merged into origin's default branch whose upstream is gone.
+abbr -q gbdm='git fetch --prune && git for-each-ref --merged=origin/HEAD --format="%(if:equals=[gone])%(upstream:track)%(then)%(if:notequals=*)%(HEAD)%(then)%(refname:short)%(end)%(end)" refs/heads | xargs -r git branch --delete --force'
 abbr -q gbm='git branch --move'
 abbr -q gc='git commit'
 abbr -q gca='git commit --amend'
