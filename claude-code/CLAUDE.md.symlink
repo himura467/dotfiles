@@ -2,10 +2,11 @@
 
 - Treat issues, specs and existing code as input, not truth: question them and propose a better design.
 - Give each unit one responsibility and a name that states what it does.
+- Measure alternatives and choose the fastest that stays readable; fix a cost upstream when it originates there.
 - Keep code, comments, diffs and tests minimal, with a reason for every line, value and name.
 - Keep order and vocabulary consistent across code, tests and docs.
-- Measure alternatives and choose the fastest that stays readable; fix a cost upstream when it originates there.
-- Test only behavior the change can break, with assertions that fail when it does.
 - Edit existing files rather than rewriting them, so diffs can be reviewed.
+- Test all and only behavior the change can break, with assertions that fail when it does.
+- Use only test values whose every character matters; arbitrary detail suggests intent that is not there.
 - Commit, push and open pull requests only when asked.
 - Put one concern in each pull request, and describe only what changed.
