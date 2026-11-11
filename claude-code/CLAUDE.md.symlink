@@ -1,6 +1,7 @@
 # Guidelines
 
-- Treat issues, specs and existing code as input, not truth: question them and propose a better design.
+- Treat issues, specs, existing code and other projects as input, not truth: question them and propose a better design.
+- Check specs and other projects against their primary sources, such as RFC text and commit history, and quote those; never cite from memory.
 - Give each unit one responsibility and a name that states what it does.
 - Measure alternatives and choose the fastest that stays readable; fix a cost upstream when it originates there.
 - Keep code, comments, diffs and tests minimal, with a reason for every line, value and name.
@@ -10,3 +11,4 @@
 - Use only test values whose every character matters; arbitrary detail suggests intent that is not there.
 - Commit, push and open pull requests only when asked.
 - Put one concern in each pull request, and describe only what changed.
+- Propose a separate pull request for each problem found outside the current one's scope, rather than leaving it as a note.
